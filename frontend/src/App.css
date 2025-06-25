@@ -1,3 +1,32 @@
+@font-face {
+  font-family: 'Product Sans';
+  src: url('./utils/product-sans/Product Sans Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Product Sans';
+  src: url('./utils/product-sans/Product Sans Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Product Sans';
+  src: url('./utils/product-sans/Product Sans Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Product Sans';
+  src: url('./utils/product-sans/Product Sans Bold Italic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   --primary-color: #2563eb;
   --error-color: #dc2626;
@@ -18,6 +47,11 @@ body {
   min-height: 100vh;
   background-color: var(--bg-color);
   transition: background-color 0.4s cubic-bezier(0.4,0,0.2,1), color 0.4s cubic-bezier(0.4,0,0.2,1);
+  font-family: 'Product Sans', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+html, body {
+  font-family: 'Product Sans', system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 .app-layout {
@@ -42,17 +76,17 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .header-content h1 {
-  font-size: 1.7rem;
+  font-size: 1.5rem;
   color: var(--text-color);
 }
 
 .header-content nav {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   align-items: center;
 }
 
@@ -326,11 +360,13 @@ body {
 
 /* Dark mode overrides */
 .dark-mode {
-  --primary-color: #60a5fa;
-  --error-color: #f87171;
-  --text-color: #f3f4f6;
-  --bg-color: #18181b;
-  --border-color: #27272a;
+  --primary-color: #2f81f7;
+  --error-color: #f85149;
+  --text-color: #c9d1d9;
+  --bg-color: #0d1117;
+  --border-color: #30363d;
+  --header-bg: #161b22;
+  --muted-color: #8b949e;
   background-color: var(--bg-color);
 }
 
@@ -341,7 +377,7 @@ body.dark-mode {
 }
 
 .dark-mode .app-header {
-  background-color: #27272a;
+  background-color: var(--header-bg);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -356,35 +392,32 @@ body.dark-mode {
 
 .dark-mode .app-main,
 .dark-mode .challenge-container,
-.dark-mode .history-panel {
-  background-color: #23272f;
-  color: var(--text-color);
-}
-
+.dark-mode .history-panel,
 .dark-mode .auth-container,
 .dark-mode .clerk-modal-content {
-  background-color: #23272f;
+  background-color: var(--header-bg);
   color: var(--text-color);
+  border-color: var(--border-color);
 }
 
 .dark-mode .option {
-  background-color: #18181b;
-  border-color: #27272a;
+  background-color: #161b22;
+  border-color: var(--border-color);
   color: var(--text-color);
 }
 
 .dark-mode .option.selected {
-  background-color: #1e293b;
+  background-color: #21262d;
   border-color: var(--primary-color);
 }
 
 .dark-mode .option.correct {
-  background-color: #166534;
-  border-color: #22c55e;
+  background-color: #238636;
+  border-color: #238636;
 }
 
 .dark-mode .option.incorrect {
-  background-color: #7f1d1d;
+  background-color: #490202;
   border-color: var(--error-color);
 }
 
@@ -392,24 +425,24 @@ body.dark-mode {
 .dark-mode .quota-display,
 .dark-mode .challenge-display,
 .dark-mode .history-item {
-  background-color: #23272f;
+  background-color: #161b22;
   color: var(--text-color);
-  border-color: #27272a;
+  border-color: var(--border-color);
 }
 
 .dark-mode .waitlist-message {
-  background-color: #78350f;
-  color: #fde68a;
+  background-color: #161b22;
+  color: var(--muted-color);
 }
 
 .dark-mode .history-note {
-  background-color: #0f172a;
-  border-color: #0ea5e9;
+  background-color: #161b22;
+  border-color: var(--primary-color);
 }
 
 .dark-mode .error-message {
-  background-color: #7f1d1d;
-  color: #f87171;
+  background-color: #490202;
+  color: #f85149;
 }
 
 .mode-toggle-btn {
@@ -417,7 +450,7 @@ body.dark-mode {
   border-radius: 0.375rem;
   outline: none;
   transition: border-color 0.2s;
-  background: linear-gradient(90deg, #f1f5f9 0%, #e0e7ef 100%);
+  background: linear-gradient(90deg, #f1f3f9 0%, #e0e7ef 100%);
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   position: relative;
   overflow: hidden;
@@ -462,4 +495,267 @@ body.dark-mode {
   align-items: center;
   gap: 0.2em;
   color: var(--text-color);
+}
+
+.challenge-type-toggle {
+  width: 340px;
+  margin: 2rem auto 2.5rem auto;
+  user-select: none;
+}
+
+.toggle-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #23272f;
+  border-radius: 2.5em;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10), 0 1.5px 6px 0 rgba(0,0,0,0.08);
+  padding: 0.5em;
+  padding-left: 0.7em;
+  padding-right: 0.7em;
+  height: 3.2em;
+  z-index: 1;
+}
+
+/* Light mode track */
+body:not(.dark-mode) .toggle-track {
+  background: #fff;
+}
+
+body:not(.dark-mode) .toggle-handle {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  box-shadow: 0 2px 16px 0 rgba(37,99,235,0.18), 0 1.5px 6px 0 rgba(37,99,235,0.10);
+}
+body:not(.dark-mode) .toggle-handle.right {
+  background: linear-gradient(90deg, #60a5fa 0%, #2563eb 100%);
+}
+
+body:not(.dark-mode) .toggle-label {
+  color: #23272f;
+}
+body:not(.dark-mode) .toggle-label.active {
+  color: #fff;
+}
+
+/* Dark mode track */
+.dark-mode .toggle-track {
+  background: #161b22;
+  box-shadow: 0 6px 32px 0 rgba(0,0,0,0.45), 0 1.5px 6px 0 rgba(255,152,0,0.10);
+  border: 1.5px solid #22262c;
+  /* Optional: subtle glow */
+  /* box-shadow: 0 6px 32px 0 rgba(0,0,0,0.45), 0 0 0 2px #ff980055; */
+}
+
+.dark-mode .toggle-handle {
+  background: linear-gradient(90deg, #ff9800 0%, #ffb347 100%);
+  box-shadow: 0 2px 16px 0 rgba(255,152,0,0.18), 0 1.5px 6px 0 rgba(255,152,0,0.10);
+}
+.dark-mode .toggle-handle.right {
+  background: linear-gradient(90deg, #ffb347 0%, #ff9800 100%);
+}
+.dark-mode .toggle-label {
+  color: #fff;
+}
+.dark-mode .toggle-label.active {
+  color: #23272f;
+}
+
+.toggle-label {
+  flex: 1 1 0;
+  position: relative;
+  z-index: 2;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.6em 0 0.6em 0;
+  border-radius: 2em;
+  cursor: pointer;
+  transition: color 0.25s cubic-bezier(0.4,0,0.2,1), text-shadow 0.25s;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.10);
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none !important;
+}
+
+.toggle-label:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.toggle-label.active {
+  text-shadow: 0 2px 8px rgba(37,99,235,0.18);
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-label.left.active,
+.toggle-label.right.active {
+  z-index: 3;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-handle {
+  position: absolute;
+  top: 50%;
+  left: 0.25em;
+  width: calc(50% - 0.25em);
+  height: calc(100% - 0.3em * 2);
+  border-radius: 2em;
+  transition: left 0.35s cubic-bezier(0.4,1.4,0.2,1), background 0.35s, box-shadow 0.25s;
+  z-index: 2;
+  will-change: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 8px #2563eb33);
+  animation: popIn 0.4s cubic-bezier(0.4,1.4,0.2,1);
+  transform: translateY(-50%);
+}
+.toggle-handle.right {
+  left: calc(50% + 0.10em);
+}
+
+.toggle-label.right.active {
+  margin-right: 0.3em;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 500px) {
+  .challenge-type-toggle {
+    width: 98vw;
+    min-width: 0;
+  }
+}
+
+.challenge-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text-color);
+}
+
+.challenge-generator-ui {
+  max-width: 540px;
+  margin: 2.5rem auto;
+  background: var(--bg-color);
+  border-radius: 1.2em;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background 0.4s, box-shadow 0.4s;
+}
+
+.challenge-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text-color);
+}
+
+.challenge-ui-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.difficulty-selector-ui {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  justify-content: center;
+}
+
+.difficulty-selector-ui label {
+  color: var(--text-color);
+  font-weight: 500;
+  font-size: 1.05em;
+}
+
+.difficulty-select {
+  padding: 0.5em 1.2em;
+  border-radius: 0.4em;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-size: 1em;
+  font-weight: 500;
+  transition: border-color 0.2s, background 0.2s;
+}
+.difficulty-select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* Generate Challenge Button - match toggle handle style */
+.generate-challenge-btn {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  color: #fff;
+  box-shadow: 0 2px 16px 0 rgba(37,99,235,0.18), 0 1.5px 6px 0 rgba(37,99,235,0.10);
+  border: none;
+  border-radius: 2em;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.7em 2.2em;
+  margin: 1.5em 0 0.5em 0;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.generate-challenge-btn:hover:not(:disabled),
+.generate-challenge-btn:focus:not(:disabled) {
+  background: linear-gradient(90deg, #60a5fa 0%, #2563eb 100%);
+  box-shadow: 0 4px 16px 0 rgba(37,99,235,0.18);
+}
+.generate-challenge-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dark-mode .generate-challenge-btn {
+  background: linear-gradient(90deg, #ff9800 0%, #ffb347 100%);
+  color: #23272f;
+  box-shadow: 0 2px 16px 0 rgba(255,152,0,0.18), 0 1.5px 6px 0 rgba(255,152,0,0.10);
+}
+.dark-mode .generate-challenge-btn:hover:not(:disabled),
+.dark-mode .generate-challenge-btn:focus:not(:disabled) {
+  background: linear-gradient(90deg, #ffb347 0%, #ff9800 100%);
+  box-shadow: 0 4px 16px 0 rgba(255,152,0,0.18);
+}
+
+.challenge-error-message {
+  color: var(--error-color);
+  background: #fff0f0;
+  border: 1.5px solid var(--error-color);
+  border-radius: 0.4em;
+  padding: 0.7em 1em;
+  margin-top: 1em;
+  font-size: 1em;
+  text-align: center;
+}
+.dark-mode .challenge-error-message {
+  background: #490202;
+  color: #f85149;
+  border-color: #f85149;
+}
+
+.challenge-content-panel {
+  width: 100%;
+  margin-top: 2.2rem;
 }
