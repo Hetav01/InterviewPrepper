@@ -7,14 +7,16 @@ import { HistoryPanel } from './history/HistoryPanel.jsx'
 import { ChallengeGenerator } from './challenge/ChallengeGenerator.jsx'
 import { InterviewChallenge } from './challenge/InterviewChallenge.jsx'
 import { AuthenticationPage } from './auth/AuthenticationPage.jsx'
+import LandingPage from './LandingPage.jsx'
 
 function App() {
   return <ClerkProviderWithRoutes>
     <Routes>
       <Route path= "/sign-in/*" element={<AuthenticationPage />}></Route>
       <Route path='/sign-up' element={<AuthenticationPage />}></Route>
+      <Route path="/" element={<LandingPage />}></Route>
       <Route element={<Layout />}>
-        <Route path="/" element={<ChallengeGenerator />}></Route>
+        <Route path="/app" element={<ChallengeGenerator />}></Route>
         <Route path="/history" element={<HistoryPanel />}></Route>
       </Route>
     </Routes>

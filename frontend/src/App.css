@@ -759,3 +759,74 @@ body:not(.dark-mode) .toggle-label.active {
   width: 100%;
   margin-top: 2.2rem;
 }
+
+/* --- Landing Page Styles --- */
+.landing-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.5s;
+  position: relative;
+  overflow: hidden;
+}
+.landing-title {
+  font-family: 'Product Sans', sans-serif;
+  font-weight: 700;
+  font-size: 3.2rem;
+  color: var(--primary-color);
+  letter-spacing: 0.04em;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  min-height: 3.5em;
+  text-shadow: 0 4px 32px #2563eb33;
+  white-space: pre;
+  border-right: 0.12em solid var(--primary-color);
+  animation: blink-caret 0.8s step-end infinite;
+}
+.landing-btn-group {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 1.5rem;
+  animation: fadeInUp 1s;
+}
+.landing-btn {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.3rem;
+  padding: 0.9em 2.5em;
+  border: none;
+  border-radius: 2em;
+  box-shadow: 0 2px 16px 0 rgba(37,99,235,0.18);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  outline: none;
+  letter-spacing: 0.03em;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+.landing-btn:last-child {
+  background: linear-gradient(90deg, #ff9800 0%, #ffb347 100%);
+  color: #23272f;
+  box-shadow: 0 2px 16px 0 rgba(255,152,0,0.18);
+}
+.landing-btn:hover, .landing-btn:focus {
+  transform: scale(1.07);
+  box-shadow: 0 4px 24px 0 rgba(37,99,235,0.22);
+}
+.landing-btn:last-child:hover, .landing-btn:last-child:focus {
+  box-shadow: 0 4px 24px 0 rgba(255,152,0,0.22);
+}
+@keyframes blink-caret {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: var(--primary-color); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -49,6 +49,24 @@ export function InterviewChallenge({challenge, showExplanation = false}) {
   
   
   return <div className="challenge-display">
-    <p><strong>Difficulty:</strong></p>
+    <p><strong>Difficulty:</strong> {challenge.difficulty}</p>
+    <p className="challenge-title">{challenge.title}</p>
+    <div className="challenge-options">
+      {options.map((option, index) => (
+        <div
+          key={index}
+          className={getOptionClass(index)}
+          onClick={() => handleOptionSelect(index)}
+        >
+          {option}
+        </div>
+      ))}
+      {shouldShowExplanation && selectedOption !== null && (
+        <div className="explanation">
+          <h4>Explanation</h4>
+          <p>{challenge.explaination}</p>
+        </div>
+      )}
+    </div>
   </div>;
 }
