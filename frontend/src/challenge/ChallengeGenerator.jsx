@@ -11,6 +11,7 @@ export function ChallengeGenerator() {
     const [quota, setQuota] = useState(10);
     const [challengeType, setChallengeType] = useState("mcq"); // 'mcq' or 'scenario'
     const  [numQuestions, setNumQuestions] = useState(5);
+    const [topic, setTopic] = useState("");
     
     const fetchQuota = async() => {
         // To be implemented
@@ -86,12 +87,28 @@ export function ChallengeGenerator() {
         );
     }
 
+    function renderTopicInput() {
+        return (
+            <div className="topic-input-ui">
+                <label htmlFor="topic-input">Topic Name:</label>
+                <input
+                    id="topic-input"
+                    type="text"
+                    value={topic}
+                    onChange={e => setTopic(e.target.value)}
+                    className="topic-input"
+                    placeholder="e.g. Neural Networks, SVM, etc."
+                />
+            </div>
+        );
+    }
+
     // Function to render the correct challenge component based on challengeType
     function renderChallengeComponent(type) {
         if (type === "mcq") {
-            return <InterviewChallenge/>;
+            return <InterviewChallenge challenge={challenge} topic={topic} numQuestions={numQuestions} difficulty={difficulty} />;
         } else {
-            return <ScenarioChallenge/>;
+            return <ScenarioChallenge challenge={challenge} topic={topic} numQuestions={numQuestions} difficulty={difficulty} />;
         }
     }
 
@@ -116,6 +133,7 @@ export function ChallengeGenerator() {
                         </select>
                     </div>
                 </div>
+                {renderTopicInput()}
                 <button
                     className="generate-challenge-btn"
                     style={{

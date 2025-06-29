@@ -12,10 +12,19 @@ import { useState } from "react";
  * 
  */
 
-export function InterviewChallenge({challenge, showExplanation = false}) {
+export function InterviewChallenge({challenge, showExplanation = false, topic, numQuestions, difficulty}) {
   // Defensive check to prevent crash if challenge or options is undefined
   if (!challenge || !challenge.options) {
-    return <div style={{ color: 'red', padding: 20 }}>No question loaded.</div>;
+    return (
+      <div className="defensive-check-card">
+        <span className="defensive-check-error">No question loaded.</span>
+        <div className="defensive-check-info">
+          <div><strong>Topic:</strong> {topic || <span style={{ color: '#888' }}>N/A</span>}</div>
+          <div><strong>Number of Questions:</strong> {numQuestions || <span style={{ color: '#888' }}>N/A</span>}</div>
+          <div><strong>Difficulty:</strong> {difficulty || <span style={{ color: '#888' }}>N/A</span>}</div>
+        </div>
+      </div>
+    );
   }
 
   // The challenge is the content of the challenge, a topic that the user will want questions on.
@@ -70,3 +79,16 @@ export function InterviewChallenge({challenge, showExplanation = false}) {
     </div>
   </div>;
 }
+
+/**
+ * MCQ Challenge Data Model Example:
+ * {
+ *   id: string,
+ *   title: string, // The question or topic
+ *   options: string[],
+ *   correct_answer_id: number, // index of correct option
+ *   explaination: string, // explanation for the answer
+ *   difficulty: string, // easy, medium, hard
+ *   topic: string, // topic name
+ * }
+ */
