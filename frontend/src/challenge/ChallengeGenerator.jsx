@@ -24,6 +24,12 @@ export function ChallengeGenerator() {
         // To be implemented
     }
 
+    useEffect(() => {
+        if (challengeType === 'scenario' && numQuestions > 3) {
+            setNumQuestions(3);
+        }
+    }, [challengeType]);
+
     // Modern orange slider switch for challenge type selection
     function renderChallengeTypeSelector() {
         return (
@@ -74,7 +80,7 @@ export function ChallengeGenerator() {
                     className="num-questions-input"
                 />
                 <span style={{ marginLeft: '0.5em', color: 'var(--text-color)', fontSize: '0.95em' }}>
-                    (max {max} for {challengeType === 'scenario' ? 'Scenario' : 'Interview'})
+                    (max {max})
                 </span>
             </div>
         );

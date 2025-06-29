@@ -619,6 +619,7 @@ body:not(.dark-mode) .toggle-label.active {
   left: calc(50% + 0.10em);
 }
 
+.toggle-label.right,
 .toggle-label.right.active {
   margin-right: 0;
 }
