@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { Outlet, Link, Navigate } from "react-router-dom";
+import LogoBot from '../utils/LogoBot.jsx';
 
 export function Layout() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -38,7 +39,10 @@ export function Layout() {
   return <div className="app-layout">
     <header className="app-header">
         <div className="header-content">
-            <h1>ML Interview Prepper</h1>
+            <div style={{display: 'flex', alignItems: 'center', gap: '0.7em'}}>
+              <LogoBot className="navbar-logo" gradientId="logo-gradient-navbar" size="2.3em" />
+              <h1 style={{margin: 0}}>ML Interview Prepper</h1>
+            </div>
             <nav>
                 <SignedIn>
                     <Link to="/">Generate Preperation Challenge</Link>

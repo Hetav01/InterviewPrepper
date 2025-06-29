@@ -10,6 +10,7 @@ export function ChallengeGenerator() {
     const [difficulty, setDifficulty] = useState("easy");
     const [quota, setQuota] = useState(10);
     const [challengeType, setChallengeType] = useState("mcq"); // 'mcq' or 'scenario'
+    const  [numQuestions, setNumQuestions] = useState(5);
     
     const fetchQuota = async() => {
         // To be implemented
@@ -52,12 +53,39 @@ export function ChallengeGenerator() {
         );
     }
 
+    // Add number of questions input, with max depending on challengeType
+    function renderNumQuestionsInput() {
+        const max = challengeType === 'scenario' ? 3 : 7;
+        return (
+            <div className="num-questions-ui">
+                <label htmlFor="num-questions">Number of Questions:</label>
+                <input
+                    id="num-questions"
+                    type="number"
+                    min={1}
+                    max={max}
+                    value={numQuestions}
+                    onChange={e => {
+                        let val = Number(e.target.value);
+                        if (val < 1) val = 1;
+                        if (val > max) val = max;
+                        setNumQuestions(val);
+                    }}
+                    className="num-questions-input"
+                />
+                <span style={{ marginLeft: '0.5em', color: 'var(--text-color)', fontSize: '0.95em' }}>
+                    (max {max} for {challengeType === 'scenario' ? 'Scenario' : 'Interview'})
+                </span>
+            </div>
+        );
+    }
+
     // Function to render the correct challenge component based on challengeType
     function renderChallengeComponent(type) {
         if (type === "mcq") {
-            return <InterviewChallenge />;
+            return <InterviewChallenge/>;
         } else {
-            return <ScenarioChallenge />;
+            return <ScenarioChallenge/>;
         }
     }
 
@@ -66,22 +94,22 @@ export function ChallengeGenerator() {
             <h2 className="challenge-title">Interview Challenge Generator</h2>
             <div className="challenge-ui-panel">
                 {renderChallengeTypeSelector()}
-                {/* Add more UI elements here, e.g., difficulty selector, quota, etc. */}
-                {/* Example: Difficulty selector */}
-                <div className="difficulty-selector-ui">
-                    <label htmlFor="difficulty-select">Difficulty:</label>
-                    <select
-                        id="difficulty-select"
-                        value={difficulty}
-                        onChange={e => setDifficulty(e.target.value)}
-                        className="difficulty-select"
-                    >
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
-                    </select>
+                <div className="challenge-common-row">
+                    {renderNumQuestionsInput()}
+                    <div className="difficulty-selector-ui">
+                        <label htmlFor="difficulty-select">Difficulty:</label>
+                        <select
+                            id="difficulty-select"
+                            value={difficulty}
+                            onChange={e => setDifficulty(e.target.value)}
+                            className="difficulty-select"
+                        >
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
                 </div>
-                {/* Example: Generate button */}
                 <button
                     className="generate-challenge-btn"
                     style={{
@@ -91,7 +119,7 @@ export function ChallengeGenerator() {
                         fontWeight: 600,
                         fontSize: '1.1rem',
                         padding: '0.7em 2.2em',
-                        margin: '1.5em 0 0.5em 0',
+                        margin: '2em 0 0.5em 0',
                         cursor: 'pointer',
                         transition: 'background 0.2s, box-shadow 0.2s',
                     }}

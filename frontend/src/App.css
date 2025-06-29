@@ -620,7 +620,7 @@ body:not(.dark-mode) .toggle-label.active {
 }
 
 .toggle-label.right.active {
-  margin-right: 0.3em;
+  margin-right: 0;
 }
 
 @keyframes popIn {
@@ -646,12 +646,14 @@ body:not(.dark-mode) .toggle-label.active {
 }
 
 .challenge-generator-ui {
-  max-width: 540px;
+  max-width: 900px;
+  min-width: 420px;
+  width: 90vw;
   margin: 2.5rem auto;
   background: var(--bg-color);
   border-radius: 1.2em;
   box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
-  padding: 2.5rem 2rem 2rem 2rem;
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -685,23 +687,41 @@ body:not(.dark-mode) .toggle-label.active {
 
 .difficulty-selector-ui label {
   color: var(--text-color);
-  font-weight: 500;
-  font-size: 1.05em;
+  font-weight: 700;
+  font-size: 1.08em;
+  letter-spacing: 0.01em;
+  padding: 0;
+  margin-right: 0.7em;
 }
 
-.difficulty-select {
-  padding: 0.5em 1.2em;
+.difficulty-select, .num-questions-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.55em 1.2em;
   border-radius: 0.4em;
   border: 1.5px solid var(--border-color);
   background: var(--bg-color);
   color: var(--text-color);
-  font-size: 1em;
-  font-weight: 500;
-  transition: border-color 0.2s, background 0.2s;
-}
-.difficulty-select:focus {
-  border-color: var(--primary-color);
+  font-size: 1.08em;
+  font-weight: 600;
+  box-shadow: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
   outline: none;
+  cursor: pointer;
+  width: 7em;
+  text-align: center;
+  margin-left: 0.2em;
+  margin-right: 0.2em;
+  height: 2.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.difficulty-select:focus, .num-questions-input:focus {
+  border-color: var(--primary-color);
+  background: var(--bg-color);
+  color: var(--text-color);
 }
 
 /* Generate Challenge Button - match toggle handle style */
@@ -761,23 +781,33 @@ body:not(.dark-mode) .toggle-label.active {
 }
 
 /* --- Landing Page Styles --- */
-.landing-bg {
+.landing-root {
+  position: relative;
   min-height: 100vh;
   width: 100vw;
-  background: var(--bg-color);
+}
+.landing-vanta-bg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+.landing-bg {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: transparent;
   transition: background 0.5s;
   position: relative;
-  overflow: hidden;
+  z-index: 1;
 }
 .landing-title {
   font-family: 'Product Sans', sans-serif;
   font-weight: 700;
-  font-size: 3.2rem;
-  color: var(--primary-color);
+  font-size: 4.2rem;
   letter-spacing: 0.04em;
   text-align: center;
   margin-bottom: 2.5rem;
@@ -787,6 +817,13 @@ body:not(.dark-mode) .toggle-label.active {
   border-right: 0.12em solid var(--primary-color);
   animation: blink-caret 0.8s step-end infinite;
 }
+.landing-gradient-title {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 40%, #ff9800 70%, #ffb347 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
 .landing-btn-group {
   display: flex;
   gap: 2.5rem;
@@ -794,8 +831,6 @@ body:not(.dark-mode) .toggle-label.active {
   animation: fadeInUp 1s;
 }
 .landing-btn {
-  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
-  color: #fff;
   font-weight: 700;
   font-size: 1.3rem;
   padding: 0.9em 2.5em;
@@ -810,16 +845,24 @@ body:not(.dark-mode) .toggle-label.active {
   overflow: hidden;
   z-index: 2;
 }
-.landing-btn:last-child {
+.landing-btn-signin {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  color: #fff;
+}
+.landing-btn-signup {
   background: linear-gradient(90deg, #ff9800 0%, #ffb347 100%);
   color: #23272f;
   box-shadow: 0 2px 16px 0 rgba(255,152,0,0.18);
 }
-.landing-btn:hover, .landing-btn:focus {
+.landing-btn.hovered,
+.landing-btn:focus,
+.landing-btn:hover {
   transform: scale(1.07);
   box-shadow: 0 4px 24px 0 rgba(37,99,235,0.22);
 }
-.landing-btn:last-child:hover, .landing-btn:last-child:focus {
+.landing-btn-signup.hovered,
+.landing-btn-signup:focus,
+.landing-btn-signup:hover {
   box-shadow: 0 4px 24px 0 rgba(255,152,0,0.22);
 }
 @keyframes blink-caret {
@@ -829,4 +872,190 @@ body:not(.dark-mode) .toggle-label.active {
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(40px); }
   to { opacity: 1; transform: translateY(0); }
+}
+.fade-out {
+  animation: fadeOutLanding 0.6s forwards;
+}
+@keyframes fadeOutLanding {
+  to { opacity: 0; transform: scale(0.98); }
+}
+.landing-copyright {
+  position: fixed;
+  bottom: 12px;
+  left: 0;
+  width: 100vw;
+  text-align: center;
+  font-size: 1.012rem;
+  color: var(--text-color);
+  opacity: 0.32;
+  letter-spacing: 0.01em;
+  z-index: 1;
+  pointer-events: none;
+  font-family: 'Product Sans, sans-serif';
+  font-weight: 500;
+}
+.copyright-symbol {
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+  .app-layout {
+    min-height: 100vh;
+    width: 100vw;
+    padding: 0;
+  }
+  .app-header {
+    padding: 0.7rem 0;
+  }
+  .header-content {
+    padding: 0 0.7rem;
+    font-size: 0.95rem;
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: flex-start;
+  }
+  .header-content h1 {
+    font-size: 1.1rem;
+  }
+  .app-main {
+    max-width: 100vw;
+    padding: 1rem 0.2rem;
+  }
+  .challenge-container,
+  .history-panel,
+  .auth-container {
+    width: 98vw;
+    min-width: 0;
+    padding: 1rem 0.5rem;
+    box-sizing: border-box;
+  }
+  .landing-bg {
+    min-height: 100vh;
+    width: 100vw;
+    padding: 0 0.5rem;
+  }
+  .landing-title {
+    font-size: 2.1rem !important;
+    min-height: 2.2em;
+    margin-bottom: 1.2rem;
+  }
+  .landing-btn-group {
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-top: 0.7rem;
+  }
+  .landing-btn {
+    font-size: 1.05rem !important;
+    padding: 0.7em 1.2em !important;
+    width: 100%;
+    min-width: 0;
+    border-radius: 1.2em;
+  }
+  .challenge-title {
+    font-size: 1.1rem;
+  }
+  .challenge-generator-ui {
+    padding: 1.2rem 0.5rem;
+    max-width: 99vw;
+  }
+  .challenge-content-panel {
+    margin-top: 1.2rem;
+  }
+}
+
+.landing-logo-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+.landing-logo-gradient {
+  display: block;
+  max-width: 40vw;
+  max-height: 40vw;
+}
+@media (max-width: 600px) {
+  .landing-logo-gradient {
+    max-width: 28vw;
+    max-height: 28vw;
+  }
+}
+.navbar-logo {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.7em;
+  max-width: 2.5em;
+  max-height: 2.5em;
+}
+/* Light/dark mode SVG gradient fix */
+body.dark-mode .landing-logo-gradient,
+body.dark-mode .navbar-logo {
+  filter: brightness(1.1) saturate(1.1);
+}
+body:not(.dark-mode) .landing-logo-gradient,
+body:not(.dark-mode) .navbar-logo {
+  filter: brightness(0.95) saturate(1.1);
+}
+
+.fade-in {
+  animation: fadeInLanding 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes fadeInLanding {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.landing-loading-placeholder {
+  min-height: 100vh;
+  width: 100vw;
+  background: transparent;
+}
+.landing-copyright, .copyright-symbol {
+  font-family: 'Product Sans', system-ui, Avenir, Helvetica, Arial, sans-serif !important;
+}
+
+.num-questions-ui {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  justify-content: center;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.num-questions-ui label {
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.08em;
+  letter-spacing: 0.01em;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  margin-right: 0.0em;
+}
+
+.challenge-common-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5em;
+  margin: 2em 0 0.5em 0;
+}
+
+@media (max-width: 900px) {
+  .challenge-generator-ui {
+    max-width: 99vw;
+    padding: 1.2rem 0.5rem;
+  }
+  .challenge-common-row {
+    flex-direction: column;
+    gap: 1.2em;
+    margin: 1.2em 0 0.5em 0;
+  }
 }
