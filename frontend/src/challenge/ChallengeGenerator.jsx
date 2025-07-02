@@ -11,7 +11,6 @@ export function ChallengeGenerator() {
     const [quota, setQuota] = useState(10);
     const [challengeType, setChallengeType] = useState("mcq"); // 'mcq' or 'scenario'
     const  [numQuestions, setNumQuestions] = useState(5);
-    const [topic, setTopic] = useState("");
     
     const fetchQuota = async() => {
         // To be implemented
@@ -87,16 +86,16 @@ export function ChallengeGenerator() {
         );
     }
 
-    function renderTopicInput() {
+    function renderChallengeInput() {
         return (
-            <div className="topic-input-ui">
-                <label htmlFor="topic-input">Topic Name:</label>
+            <div className="challenge-input-ui">
+                <label htmlFor="challenge-input">Topic Name:</label>
                 <input
-                    id="topic-input"
+                    id="challenge-input"
                     type="text"
-                    value={topic}
-                    onChange={e => setTopic(e.target.value)}
-                    className="topic-input"
+                    value={challenge}
+                    onChange={e => setChallenge(e.target.value)}
+                    className="challenge-input"
                     placeholder="e.g. Neural Networks, SVM, etc."
                 />
             </div>
@@ -106,9 +105,9 @@ export function ChallengeGenerator() {
     // Function to render the correct challenge component based on challengeType
     function renderChallengeComponent(type) {
         if (type === "mcq") {
-            return <InterviewChallenge challenge={challenge} topic={topic} numQuestions={numQuestions} difficulty={difficulty} />;
+            return <InterviewChallenge challenge={challenge} topic={challenge} numQuestions={numQuestions} difficulty={difficulty} />;
         } else {
-            return <ScenarioChallenge challenge={challenge} topic={topic} numQuestions={numQuestions} difficulty={difficulty} />;
+            return <ScenarioChallenge challenge={challenge} topic={challenge} numQuestions={numQuestions} difficulty={difficulty} />;
         }
     }
 
@@ -133,7 +132,7 @@ export function ChallengeGenerator() {
                         </select>
                     </div>
                 </div>
-                {renderTopicInput()}
+                {renderChallengeInput()}
                 <button
                     className="generate-challenge-btn"
                     style={{

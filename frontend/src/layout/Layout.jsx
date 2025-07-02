@@ -50,31 +50,28 @@ export function Layout() {
                     <UserButton />
                 </SignedIn>
                 <button
-                  className="mode-toggle-btn"
+                  className="mode-toggle-slider"
                   aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
                   onClick={() => setDarkMode(dm => !dm)}
+                  type="button"
+                  tabIndex={0}
                   style={{
                     marginLeft: '1rem',
                     background: 'none',
+                    border: 'none',
+                    padding: 0,
                     cursor: 'pointer',
-                    fontSize: '1.1rem',
-                    padding: '0.4rem 0.9rem',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
-                    color: 'var(--text-color)',
                     position: 'relative',
                   }}
                 >
-                  <span className="mode-toggle-icon">{darkMode ? '🌙' : '☀️'}</span>
-                  <span style={{fontWeight: 500}}>{darkMode ? 'Dark' : 'Light'}</span>
-                  <span className="mode-toggle-tooltip" style={{marginLeft: '0.5em', fontSize: '0.95em', opacity: 0.85, display: 'flex', alignItems: 'center', gap: '0.2em'}}>
-                    <span style={{fontFamily: 'SF Mono, Menlo, Monaco, Consolas, monospace'}}>⌘</span>
-                    <span style={{fontSize: '0.9em', margin: '0 0.1em'}}>/</span>
-                    <span style={{fontFamily: 'SF Mono, Menlo, Monaco, Consolas, monospace'}}>Ctrl</span>
-                    <span style={{fontSize: '0.9em', margin: '0 0.1em'}}>+</span>
-                    <span style={{fontFamily: 'SF Mono, Menlo, Monaco, Consolas, monospace'}}>J</span>
-                  </span>
+                  <span className="visually-hidden">{darkMode ? 'Switch to light mode' : 'Switch to dark mode'}</span>
+                  <div className="slider-track">
+                    <span className="slider-icon slider-icon-left" aria-hidden="true" style={{opacity: darkMode ? 0.5 : 1}}>🌙</span>
+                    <span className="slider-icon slider-icon-right" aria-hidden="true" style={{opacity: darkMode ? 1 : 0.5}}>☀️</span>
+                    <span className={`slider-handle${darkMode ? ' right' : ''}`}></span>
+                  </div>
                 </button>
             </nav>
         </div>

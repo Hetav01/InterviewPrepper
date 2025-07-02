@@ -1066,15 +1066,16 @@ body:not(.dark-mode) .navbar-logo {
   display: flex;
   align-items: center;
   gap: 0.7em;
-  justify-content: center;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
+  padding-left: 15%;
+  padding-right: 15%;
 }
 
 .topic-input-ui label {
   color: var(--text-color);
   font-weight: 600;
-  font-size: 1.08em;
+  font-size: 1.25em;
   letter-spacing: 0.01em;
   padding: 0;
   background: none;
@@ -1097,14 +1098,15 @@ body:not(.dark-mode) .navbar-logo {
   box-shadow: none;
   transition: border-color 0.2s, background 0.2s, color 0.2s;
   outline: none;
-  width: 16em;
+  flex: 1;
+  min-width: 0;
   text-align: left;
   margin-left: 0.2em;
   margin-right: 0.2em;
   height: 2.6em;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .topic-input:focus {
   border-color: var(--primary-color);
@@ -1173,9 +1175,9 @@ body:not(.dark-mode) .navbar-logo {
   border: 1.5px solid var(--border-color, #e5e7eb);
   border-radius: 0.5rem;
   padding: 2.5rem 2rem;
-  margin: 2rem auto;
-  max-width: 600px;
-  width: 100%;
+  margin: 1.5rem auto;
+  max-width: 600px auto;
+  width: 90%;
   text-align: center;
   color: var(--text-color, #1f2937);
   box-shadow: 0 2px 12px 0 rgba(0,0,0,0.06);
@@ -1188,7 +1190,7 @@ body:not(.dark-mode) .navbar-logo {
 .defensive-check-card .defensive-check-error {
   color: var(--error-color, #dc2626);
   font-weight: 600;
-  font-size: 1.1em;
+  font-size: 1.7em;
   margin-bottom: 0.7em;
 }
 
@@ -1197,5 +1199,128 @@ body:not(.dark-mode) .navbar-logo {
   flex-direction: column;
   gap: 0.3em;
   align-items: center;
-  font-size: 1.05em;
+  font-size: 1.25em;
+}
+
+.mode-toggle-slider {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  height: 2.88em;
+}
+
+.slider-track {
+  position: relative;
+  width: 6em;
+  height: 2.4em;
+  background: linear-gradient(90deg, #23272f 0%, #18181b 100%);
+  border-radius: 1.2em;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.54em;
+  transition: background 0.3s;
+}
+
+body:not(.dark-mode) .slider-track {
+  background: linear-gradient(90deg, #f1f3f9 0%, #e0e7ef 100%);
+}
+
+.slider-icon {
+  font-size: 1.5em;
+  z-index: 2;
+  transition: opacity 0.25s;
+  user-select: none;
+  pointer-events: none;
+}
+
+.slider-handle {
+  position: absolute;
+  top: 0.216em;
+  left: 0.216em;
+  width: 1.98em;
+  height: 1.98em;
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.10);
+  transition: left 0.32s cubic-bezier(0.4,1.4,0.2,1), background 0.32s;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-handle.right {
+  left: 3.84em;
+  background: linear-gradient(90deg, #ff9800 0%, #ffb347 100%);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.challenge-input-ui {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+.challenge-input-ui label {
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.25em;
+  letter-spacing: 0.01em;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  margin-right: 0.0em;
+}
+
+.challenge-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.55em 1.2em;
+  border-radius: 0.4em;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-size: 1.08em;
+  font-weight: 600;
+  box-shadow: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  margin-left: 0.2em;
+  margin-right: 0.2em;
+  height: 2.6em;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.challenge-input:focus {
+  border-color: var(--primary-color);
+  background: var(--bg-color);
+  color: var(--text-color);
 }
