@@ -33,9 +33,10 @@ def reset_quota_if_needed(db: Session, quota: models.ChallengeQuota):
 
 # Interview Challenge Functions
 
-def create_interview_challenge(db: Session, difficulty: str, topic: str, title: str, options: str, correct_answer_id: int, explaination: str):
+def create_interview_challenge(db: Session, difficulty: str, created_by: str, topic: str, title: str, options: str, correct_answer_id: int, explaination: str):
     db_interview_challenge = models.InterviewChallenge(
         difficulty=difficulty,
+        created_by=created_by,
         topic=topic,  # User input: what they want to learn about
         title=title,  # AI-generated: the actual question text
         options=options,  # JSON string of answer choices
@@ -49,9 +50,10 @@ def create_interview_challenge(db: Session, difficulty: str, topic: str, title: 
 
 # Scenario Challenge Functions
 
-def create_scenario_challenge(db: Session, difficulty: str, topic: str, title: str, questions: str, correct_answer: str = None, explanation: str = None):
+def create_scenario_challenge(db: Session, difficulty: str, created_by: str, topic: str, title: str, questions: str, correct_answer: str = None, explanation: str = None):
     db_scenario_challenge = models.ScenarioChallenge(
         difficulty=difficulty,
+        created_by=created_by,
         topic=topic,  # User input: what they want to learn about
         title=title,  # AI-generated: the main scenario description
         questions=questions,  # JSON string of question objects
@@ -62,3 +64,12 @@ def create_scenario_challenge(db: Session, difficulty: str, topic: str, title: s
     db.commit()
     db.refresh(db_scenario_challenge)
     return db_scenario_challenge
+
+# Get User Challenges Function
+
+def get_user_challenges(db: Session, user_id: str, challenge_type: str):
+    return db.query(
+        models.InterviewChallenge if challenge_type == "mcq" else models.ScenarioChallenge
+    ).filter(
+        models.InterviewChallenge.created_by == user_id if challenge_type == "mcq" else models.ScenarioChallenge.created_by == user_id
+    ).all()
