@@ -12,10 +12,11 @@ class InterviewChallenge(Base):
     id = Column(Integer, primary_key=True)
     difficulty = Column(String, nullable=False)
     date_created = Column(DateTime, default=datetime.now)
-    title = Column(String, nullable=False)
+    topic = Column(String, nullable=False)  # User input: what they want to learn about
+    title = Column(String, nullable=False)  # AI-generated: the actual question text
     options = Column(String, nullable=False)
     correct_answer_id = Column(Integer, nullable=False)
-    explanation = Column(String, nullable=False)
+    explaination = Column(String, nullable=False)  # Keep typo to match frontend
     
 class ScenarioChallenge(Base):
     __tablename__ = "scenario_challenges"
@@ -23,7 +24,9 @@ class ScenarioChallenge(Base):
     id = Column(Integer, primary_key=True)
     difficulty = Column(String, nullable=False)
     date_created = Column(DateTime, default=datetime.now)
-    title = Column(String, nullable=False)  # The scenario prompt
+    topic = Column(String, nullable=False)  # User input: what they want to learn about
+    title = Column(String, nullable=False)  # AI-generated: the main scenario description
+    questions = Column(String, nullable=False)  # AI-generated: JSON array of question objects
     correct_answer = Column(String, nullable=True)  # The ideal answer (optional)
     explanation = Column(String, nullable=True)  # Optional: rubric or feedback
     
