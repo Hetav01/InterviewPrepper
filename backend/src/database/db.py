@@ -7,8 +7,7 @@ from datetime import datetime, timedelta
 # Challenge Quota Functions
 
 def get_challenge_quota(db: Session, user_id: str, challenge_type: str):
-    return db.query(
-        models.ChallengeQuota).filter(
+    return db.query(models.ChallengeQuota).filter(
             models.ChallengeQuota.user_id == user_id, models.ChallengeQuota.challenge_type == challenge_type
         ).first()
 
@@ -68,8 +67,13 @@ def create_scenario_challenge(db: Session, difficulty: str, created_by: str, top
 # Get User Challenges Function
 
 def get_user_challenges(db: Session, user_id: str, challenge_type: str):
-    return db.query(
-        models.InterviewChallenge if challenge_type == "mcq" else models.ScenarioChallenge
-    ).filter(
-        models.InterviewChallenge.created_by == user_id if challenge_type == "mcq" else models.ScenarioChallenge.created_by == user_id
-    ).all()
+    if challenge_type == "interview":
+        return db.query(models.InterviewChallenge).filter(
+            models.InterviewChallenge.created_by == user_id
+        ).all()
+    elif challenge_type == "scenario":
+        return db.query(models.ScenarioChallenge).filter(
+            models.ScenarioChallenge.created_by == user_id
+        ).all()
+    else:
+        raise ValueError(f"Invalid challenge_type: {challenge_type}. Must be 'interview' or 'scenario'")
