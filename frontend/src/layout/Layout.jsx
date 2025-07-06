@@ -45,8 +45,10 @@ export function Layout() {
             </div>
             <nav>
                 <SignedIn>
-                    <Link to="/">Generate Preperation Challenge</Link>
+                    <Link to="/app">Generate Preperation Challenge</Link>
                     <Link to="/history">History</Link>
+                    <Link to="/about">About</Link>
+                    <a href="#" className="portfolio-link">Portfolio</a>
                     <UserButton />
                 </SignedIn>
                 <button

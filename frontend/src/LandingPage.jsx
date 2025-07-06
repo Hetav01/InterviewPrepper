@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth, SignedOut } from '@clerk/clerk-react';
 import './App.css';
 import LogoBot from './utils/LogoBot.jsx';
 import NET from 'vanta/dist/vanta.net.min';
 import * as THREE from 'three';
+// import TechStackAnimation from './ExtraComponents/TechStackAnimation';
 
 export default function LandingPage() {
   const vantaRef = useRef(null);
@@ -12,6 +13,8 @@ export default function LandingPage() {
   const [displayedText, setDisplayedText] = useState('');
   const fullText = 'ML Interview Prepper';
   const [showButtons, setShowButtons] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
+  const [showTechStack, setShowTechStack] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -30,12 +33,12 @@ export default function LandingPage() {
       vantaEffect.current = NET({
         el: vantaRef.current,
         THREE,
-        color: 0x4f8cff,
-        backgroundColor: 0x10131a,
-        highlightColor: 0x60a5fa,
-        points: 12.0,
-        maxDistance: 22.0,
-        spacing: 18.0,
+        color: 0x3b82f6,
+        backgroundColor: 0x111827,
+        highlightColor: 0x1e40af,
+        points: 10.0,
+        maxDistance: 25.0,
+        spacing: 20.0,
         showDots: true,
         mouseControls: true,
         touchControls: true,
@@ -55,15 +58,17 @@ export default function LandingPage() {
     if (displayedText.length < fullText.length) {
       const timeout = setTimeout(() => {
         setDisplayedText(fullText.slice(0, displayedText.length + 1));
-      }, 90);
+      }, 80);
       return () => clearTimeout(timeout);
     } else {
-      setTimeout(() => setShowButtons(true), 400);
+      setTimeout(() => setShowDescription(true), 300);
+      setTimeout(() => setShowButtons(true), 900);
+      setTimeout(() => setShowTechStack(true), 1500);
     }
   }, [displayedText, fullText]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 600);
+    const timer = setTimeout(() => setIsLoaded(true), 300);
     return () => clearTimeout(timer);
   }, []);
 
@@ -78,6 +83,7 @@ export default function LandingPage() {
   return (
     <div className="landing-root">
       <div ref={vantaRef} className="landing-vanta-bg" />
+
       {isLoaded ? (
         <div className={`landing-bg dark-mode${fadeOut ? ' fade-out' : ''} fade-in`}>
           {/* Logo with gradient */}
@@ -85,9 +91,20 @@ export default function LandingPage() {
             <LogoBot className="landing-logo-gradient" gradientId="logo-gradient-landing" size={135} />
           </div>
           <h1 className="landing-title landing-gradient-title">{displayedText}</h1>
+          
+          {/* Description */}
+          {showDescription && (
+            <div className="landing-description fade-in-up">
+              <p>Master ML interviews with AI-powered practice challenges</p>
+            </div>
+          )}
+          
+          {/* Add some spacing before buttons */}
+          <div style={{ height: '40px' }}></div>
+          
           <SignedOut>
             {showButtons && (
-              <div className="landing-btn-group">
+              <div className="landing-btn-group fade-in-up">
                 <button
                   className="landing-btn landing-btn-signin"
                   onClick={() => handleButtonClick('/sign-in')}
@@ -107,6 +124,10 @@ export default function LandingPage() {
               </div>
             )}
           </SignedOut>
+
+          {/* Tech Stack Animation - Commented out for now */}
+          {/* {showTechStack && <TechStackAnimation />} */}
+
           {/* Copyright Notice */}
           <div className="landing-copyright">
             Hetav Patel <span className="copyright-symbol">©</span> 2025

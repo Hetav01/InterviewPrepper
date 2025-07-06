@@ -8,6 +8,7 @@ import { ChallengeGenerator } from './challenge/ChallengeGenerator.jsx'
 import { InterviewChallenge } from './challenge/InterviewChallenge.jsx'
 import { AuthenticationPage } from './auth/AuthenticationPage.jsx'
 import LandingPage from './LandingPage.jsx'
+import About from './ExtraComponents/About.jsx'
 
 function App() {
   return <ClerkProviderWithRoutes>
@@ -15,6 +16,7 @@ function App() {
       <Route path= "/sign-in/*" element={<AuthenticationPage />}></Route>
       <Route path='/sign-up' element={<AuthenticationPage />}></Route>
       <Route path="/" element={<LandingPage />}></Route>
+      <Route path="/about" element={<About />}></Route>
       <Route element={<Layout />}>
         <Route path="/app" element={<ChallengeGenerator />}></Route>
         <Route path="/history" element={<HistoryPanel />}></Route>
