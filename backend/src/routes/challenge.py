@@ -10,10 +10,17 @@ from ..database.db import (
     create_scenario_challenge,
     reset_quota_if_needed,
     get_challenge_quota,
+    save_scenario_answer,
+    update_scenario_evaluation
+)
+from ..agents.ai_generator_agentic import (
+    generate_interview_challenges,
+    generate_scenario_challenge,
+    evaluate_scenario_answer
 )
 
 from ..utils import authenticate_and_get_user_details
-from ..database.models import get_db
+from ..database.models import get_db, ScenarioChallenge
 import json
 from datetime import datetime
 
@@ -70,80 +77,94 @@ class ChallengeRequest(BaseModel):
 @router.post("/generate-challenge/{challenge_type}")
 async def generate_challenge(challenge_type: str, challenge_request: ChallengeRequest, request: Request, db: Session = Depends(get_db)):
     """Generate a new challenge for the user"""
-    
-    try: 
+    try:
         user_details = authenticate_and_get_user_details(request=request)
         user_id = user_details.get("user_id")
-        
+
         # Validate challenge type matches the URL parameter
         if challenge_type != challenge_request.challenge_type:
             raise HTTPException(status_code=400, detail="Challenge type in URL must match challenge type in request body")
-        
+
         # Validate challenge type
         if challenge_type not in ["interview", "scenario"]:
             raise HTTPException(status_code=400, detail="Invalid challenge type. Must be 'interview' or 'scenario'")
-        
+
         # get the user's quota for specific challenge type
         quota = get_challenge_quota(db, user_id=user_id, challenge_type=challenge_type)
-        
         if not quota:
             quota = create_challenge_quota(db, user_id=user_id, challenge_type=challenge_type)
-        
-        # Reset quota if needed (daily reset)
         quota = reset_quota_if_needed(db, quota)
-            
         if quota.quota_remaining <= 0:
             raise HTTPException(status_code=429, detail="You have reached your daily quota for this challenge type")
-        
-        # TO-DO: Generate the challenge data using AI
-        # This is where you'll call your AI generation function
-        # ai_generated_data = generate_ai_challenge(
-        #     topic=challenge_request.topic,
-        #     difficulty=challenge_request.difficulty,
-        #     challenge_type=challenge_type,
-        #     num_questions=challenge_request.num_questions
-        # )
-        
-        # TO-DO: Replace with actual AI-generated data and database save
-        # if challenge_type == "interview":
-        #     created_challenge = create_interview_challenge(
-        #         db=db,
-        #         difficulty=challenge_request.difficulty,
-        #         created_by=user_id,
-        #         topic=challenge_request.topic,
-        #         title=ai_generated_data["title"],
-        #         options=json.dumps(ai_generated_data["options"]),
-        #         correct_answer_id=ai_generated_data["correct_answer_id"],
-        #         explaination=ai_generated_data["explanation"]
-        #     )
-        # else:  # scenario
-        #     created_challenge = create_scenario_challenge(
-        #         db=db,
-        #         difficulty=challenge_request.difficulty,
-        #         created_by=user_id,
-        #         topic=challenge_request.topic,
-        #         title=ai_generated_data["title"],
-        #         questions=json.dumps(ai_generated_data["questions"]),
-        #         correct_answer=ai_generated_data["correct_answer"],
-        #         explanation=ai_generated_data["explanation"]
-        #     )
-        
-        # Decrement quota only after successful generation
-        quota.quota_remaining -= 1
-        db.commit()
-        
-        # TO-DO: Return the created challenge data
-        # return {
-        #     "challenge": created_challenge,
-        #     "quota_remaining": quota.quota_remaining
-        # }
-        
-        # Temporary response until AI is implemented
-        return {
-            "message": "Challenge generation ready - AI pending",
-            "quota_remaining": quota.quota_remaining
-        }
-        
+
+        # Generate the challenge data using the agent
+        if challenge_type == "interview":
+            ai_generated_data = generate_interview_challenges(
+                topic=challenge_request.topic,
+                difficulty=challenge_request.difficulty,
+                num_questions=challenge_request.num_questions
+            )
+            created_challenges = []
+            for q in ai_generated_data:
+                created = create_interview_challenge(
+                    db=db,
+                    difficulty=challenge_request.difficulty,
+                    created_by=user_id,
+                    topic=challenge_request.topic,
+                    title=q["title"],
+                    options=q["options"],
+                    correct_answer_id=q["correct_answer_id"],
+                    explaination=q["explaination"]
+                )
+                created_challenges.append({
+                    "id": created.id,
+                    "type": "interview",
+                    "topic": created.topic,
+                    "difficulty": created.difficulty,
+                    "title": created.title,
+                    "date_created": created.date_created.isoformat(),
+                    "options": created.options,
+                    "correct_answer_id": created.correct_answer_id,
+                    "explanation": created.explaination
+                })
+            quota.quota_remaining -= 1
+            db.commit()
+            return {
+                "challenges": created_challenges,
+                "quota_remaining": quota.quota_remaining
+            }
+        else:  # scenario
+            ai_generated_data = generate_scenario_challenge(
+                topic=challenge_request.topic,
+                difficulty=challenge_request.difficulty,
+                num_questions=challenge_request.num_questions
+            )
+            created_challenge = create_scenario_challenge(
+                db=db,
+                difficulty=challenge_request.difficulty,
+                created_by=user_id,
+                topic=challenge_request.topic,
+                title=ai_generated_data["title"],
+                questions=ai_generated_data["questions"],
+                correct_answer=ai_generated_data["correct_answer"],
+                explanation=ai_generated_data["explanation"]
+            )
+            quota.quota_remaining -= 1
+            db.commit()
+            return {
+                "challenge": {
+                    "id": created_challenge.id,
+                    "type": "scenario",
+                    "topic": created_challenge.topic,
+                    "difficulty": created_challenge.difficulty,
+                    "title": created_challenge.title,
+                    "date_created": created_challenge.date_created.isoformat(),
+                    "questions": created_challenge.questions,
+                    "correct_answer": created_challenge.correct_answer,
+                    "explanation": created_challenge.explanation
+                },
+                "quota_remaining": quota.quota_remaining
+            }
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error generating challenge: {str(e)}")
     
@@ -254,4 +275,42 @@ async def get_all_quotas(request: Request, db: Session = Depends(get_db)):
     return {
         "quotas": quotas,
         "total_remaining": quotas["interview"]["quota_remaining"] + quotas["scenario"]["quota_remaining"]
+    }
+
+class ScenarioAnswerRequest(BaseModel):
+    scenario_id: int
+    user_answer: str
+
+@router.post("/submit-scenario-answer")
+async def submit_scenario_answer(
+    answer_request: ScenarioAnswerRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    user_details = authenticate_and_get_user_details(request)
+    user_id = user_details.get("user_id")
+    # Save user answer
+    answer = save_scenario_answer(db, user_id, answer_request.scenario_id, answer_request.user_answer)
+    # Fetch scenario from DB
+    scenario = db.query(ScenarioChallenge).filter(ScenarioChallenge.id == answer_request.scenario_id).first()
+    if not scenario:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+    # Evaluate answer with agent
+    eval_result = evaluate_scenario_answer(
+        user_answer=answer_request.user_answer,
+        correct_answer=scenario.correct_answer,
+        scenario_title=scenario.title,
+        questions=scenario.questions
+    )
+    # Save evaluation
+    update_scenario_evaluation(
+        db, answer.id,
+        llm_score=eval_result["score"],
+        llm_feedback=eval_result["feedback"],
+        llm_correct_answer=eval_result["correct_answer"]
+    )
+    return {
+        "score": eval_result["score"],
+        "feedback": eval_result["feedback"],
+        "correct_answer": eval_result["correct_answer"]
     }

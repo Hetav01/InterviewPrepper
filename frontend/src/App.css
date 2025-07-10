@@ -416,6 +416,17 @@ html, body {
 
 /* --- Dark Mode --- */
 
+/* Text color variations */
+:root {
+  --text-muted: #6b7280;
+  --bg-secondary: #f8fafc;
+}
+
+body.dark-mode {
+  --text-muted: #9ca3af;
+  --bg-secondary: #374151;
+}
+
 /* Dark mode overrides */
 .dark-mode {
   /* Dark Mode Professional Colors */

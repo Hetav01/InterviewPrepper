@@ -5,3 +5,8 @@ python-dotenv
 clerk-sdk-python
 openai
 pydantic
+langgraph
+langchain
+langchain-openai
+langchain-core
+langchain-anthropic

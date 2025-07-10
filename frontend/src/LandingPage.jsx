@@ -14,13 +14,12 @@ export default function LandingPage() {
   const fullText = 'ML Interview Prepper';
   const [showButtons, setShowButtons] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const [showTechStack, setShowTechStack] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Redirect if already signed in
-  const { isSignedIn } = useAuth ? useAuth() : { isSignedIn: false };
+  // Use auth hook consistently
+  const { isSignedIn } = useAuth();
   useEffect(() => {
     if (isSignedIn) {
       navigate('/app', { replace: true });
@@ -63,7 +62,6 @@ export default function LandingPage() {
     } else {
       setTimeout(() => setShowDescription(true), 300);
       setTimeout(() => setShowButtons(true), 900);
-      setTimeout(() => setShowTechStack(true), 1500);
     }
   }, [displayedText, fullText]);
 

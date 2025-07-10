@@ -64,6 +64,26 @@ def create_scenario_challenge(db: Session, difficulty: str, created_by: str, top
     db.refresh(db_scenario_challenge)
     return db_scenario_challenge
 
+def save_scenario_answer(db: Session, user_id: str, scenario_id: int, user_answer: str):
+    answer = models.ScenarioAnswer(
+        user_id=user_id,
+        scenario_id=scenario_id,
+        user_answer=user_answer
+    )
+    db.add(answer)
+    db.commit()
+    db.refresh(answer)
+    return answer
+
+def update_scenario_evaluation(db: Session, answer_id: int, llm_score: int, llm_feedback: str, llm_correct_answer: str):
+    answer = db.query(models.ScenarioAnswer).filter(models.ScenarioAnswer.id == answer_id).first()
+    answer.llm_score = llm_score
+    answer.llm_feedback = llm_feedback
+    answer.llm_correct_answer = llm_correct_answer
+    db.commit()
+    db.refresh(answer)
+    return answer
+
 # Get User Challenges Function
 
 def get_user_challenges(db: Session, user_id: str, challenge_type: str):

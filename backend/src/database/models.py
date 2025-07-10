@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, create_engine
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 
 engine = create_engine("sqlite:///database.db", echo= True)
@@ -20,6 +20,7 @@ class InterviewChallenge(Base):
     # User input fields (what the user provides)
     topic = Column(String, nullable=False)  # USER INPUT: Subject matter (e.g., "Neural Networks", "SVM")
     difficulty = Column(String, nullable=False)  # USER INPUT: "easy", "medium", or "hard"
+    created_by = Column(String, nullable=False, index=True)  # USER AUTH: User ID who created this challenge - INDEXED for user history queries
     
     # AI-generated content fields (OpenAI outputs stored for reuse)
     title = Column(String, nullable=False)  # AI GENERATED: The actual question text (e.g., "What is backpropagation?")
@@ -41,13 +42,27 @@ class ScenarioChallenge(Base):
     # User input fields (what the user provides)
     topic = Column(String, nullable=False)  # USER INPUT: Subject matter (e.g., "Machine Learning", "Data Science")
     difficulty = Column(String, nullable=False)  # USER INPUT: "easy", "medium", or "hard"
+    created_by = Column(String, nullable=False, index=True)  # USER AUTH: User ID who created this challenge - INDEXED for user history queries
     
     # AI-generated content fields (OpenAI outputs stored for reuse)
     title = Column(String, nullable=False)  # AI GENERATED: Main scenario description (e.g., "You are a data scientist at a startup...")
     questions = Column(String, nullable=False)  # AI GENERATED: JSON array of question objects [{"prompt": "How would you handle overfitting?"}]
     correct_answer = Column(String, nullable=True)  # AI GENERATED: Optional ideal answer template for evaluation
     explanation = Column(String, nullable=True)  # AI GENERATED: Optional rubric or feedback guidelines
-    
+    answers = relationship("ScenarioAnswer", back_populates="scenario")
+
+class ScenarioAnswer(Base):
+    __tablename__ = "scenario_answers"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, nullable=False)
+    scenario_id = Column(Integer, ForeignKey("scenario_challenges.id"), nullable=False)
+    user_answer = Column(String, nullable=False)
+    llm_score = Column(Integer, nullable=True)
+    llm_feedback = Column(String, nullable=True)
+    llm_correct_answer = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.now)
+    scenario = relationship("ScenarioChallenge", back_populates="answers")
+
 class ChallengeQuota(Base):
     """
     Tracks usage limits for each user per challenge type.
@@ -59,7 +74,7 @@ class ChallengeQuota(Base):
     id = Column(Integer, primary_key=True)  # Auto-generated unique identifier
     
     # User tracking fields (from authentication system)
-    user_id = Column(Integer, nullable=False)  # CLERK AUTH: User identifier from Clerk authentication
+    user_id = Column(String, nullable=False, index=True)  # CLERK AUTH: User identifier from Clerk authentication - INDEXED for quota lookups
     
     # Quota management fields (business logic)
     challenge_type = Column(String, nullable=False)  # SYSTEM DEFINED: "mcq" or "scenario" - tracks quotas separately
