@@ -121,7 +121,7 @@ DIFFICULTY GUIDELINES:
 SCENARIO & QUESTION GUIDELINES:
 - Set a professional, realistic context relevant to ML/Data Science (e.g., “You are a Machine Learning Engineer at a fintech company…”)
 - For harder scenarios, occasionally use a short high-level system design question (not always, but for some hard questions).
-- Each question in "questions" should build on the scenario logically, challenging the candidate’s analysis, decision-making, and practical skills.
+- Each question in "questions" should build on the scenario logically, challenging the candidate's analysis, decision-making, and practical skills.
 - Include practical trade-offs and interview-appropriate complexity.
 - Make the scenario and questions engaging and relevant to real-world roles.
 
@@ -148,7 +148,7 @@ def get_evaluation_prompt(user_answer: str, correct_answer: str, scenario_title:
     - feedback (string)
     - correct_answer (string)
     """
-    return f"""Act as a Senior Data Scientist and seasoned hiring manager. Evaluate the candidate’s response to the scenario below, following the rubric and output specifications exactly.
+    return f"""Act as a Senior Data Scientist and seasoned hiring manager. Evaluate the candidate's response to the scenario below, following the rubric and output specifications exactly.
 
 SCENARIO TITLE:
 {scenario_title}
@@ -156,7 +156,7 @@ SCENARIO TITLE:
 QUESTIONS ASKED:
 {questions}
 
-USER’S ANSWER:
+USER'S ANSWER:
 {user_answer}
 
 REFERENCE ANSWER (for comparison):
@@ -165,15 +165,15 @@ REFERENCE ANSWER (for comparison):
 CRITICAL OUTPUT REQUIREMENTS:
 - Return **only** a single JSON object, no extra text or formatting.
 - The JSON must contain exactly these three fields, using these exact names and order: score, feedback, correct_answer.
-  • "score": integer 0–100 (must reflect the weighted rubric).  
+  • "score": integer 0-100 (must reflect the weighted rubric).  
   • "feedback": concise, specific, and actionable; highlight strengths first, then areas to improve.  
   • "correct_answer": a polished, ideal model answer that fully addresses the scenario.
 
 RUBRIC & WEIGHTING (use when assigning the score):
-- Technical accuracy – 40 %  
-- Problem-solving methodology – 30 %  
-- Communication clarity – 20 %  
-- Practical considerations – 10 %
+- Technical accuracy - 40 %  
+- Problem-solving methodology - 30 %  
+- Communication clarity - 20 %  
+- Practical considerations - 10 %
 
 SCORING BANDS:
 90-100  Exceptional: comprehensive, insightful, virtually flawless  

@@ -1,6 +1,7 @@
 # Python (backend)
 backend/.venv/*
 backend/__pycache__/
+backend/agents/tests/*
 *.pyc
 
 # Node (frontend, if you add one)
@@ -12,3 +13,4 @@ frontend/dist/
 
 # General
 .env
+
