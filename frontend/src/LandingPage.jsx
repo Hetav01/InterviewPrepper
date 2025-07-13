@@ -11,7 +11,7 @@ export default function LandingPage() {
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
   const [displayedText, setDisplayedText] = useState('');
-  const fullText = 'ML Interview Prepper';
+  const fullText = 'IntrVw.';
   const [showButtons, setShowButtons] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);

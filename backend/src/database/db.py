@@ -87,7 +87,7 @@ def create_challenge_quota(db: Session, user_id: str, challenge_type: str):
 
 def reset_quota_if_needed(db: Session, quota: models.ChallengeQuota):
     """
-    Reset quota to full (10) if more than 24 hours have passed since last reset.
+    Reset quota to full (10) if 24 hours have passed since last reset.
     
     Args:
         db: Database session
@@ -106,14 +106,14 @@ def reset_quota_if_needed(db: Session, quota: models.ChallengeQuota):
     
     now = datetime.now()
     
-    # Check if 24+ hours have passed since last reset
-    if now - quota.last_reset_date > timedelta(hours=24):
+    # Check if 24 hours have passed since last reset
+    if now - quota.last_reset_date >= timedelta(hours=24):
         try:
-            quota.quota_remaining = 10  # Reset to full daily quota
+            quota.quota_remaining = 10  # Reset to full quota
             quota.last_reset_date = now
             db.commit()
             db.refresh(quota)
-            logger.info(f"Reset quota for user {quota.user_id}, type {quota.challenge_type}")
+            logger.info(f"24-hour quota reset for user {quota.user_id}, type {quota.challenge_type}")
         except SQLAlchemyError as e:
             db.rollback()
             logger.error(f"Failed to reset quota for user {quota.user_id}: {str(e)}")

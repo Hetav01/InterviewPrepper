@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { Outlet, Link, Navigate } from "react-router-dom";
 import LogoBot from '../utils/LogoBot.jsx';
+import { useSessionTimeout } from '../utils/SessionManager.js';
 
 export function Layout() {
+  // Initialize session timeout
+  useSessionTimeout();
+  
   const [darkMode, setDarkMode] = useState(() => {
     // Check localStorage or system preference
     if (typeof window !== 'undefined') {
@@ -41,7 +45,7 @@ export function Layout() {
         <div className="header-content">
             <div style={{display: 'flex', alignItems: 'center', gap: '0.7em'}}>
               <LogoBot className="navbar-logo" gradientId="logo-gradient-navbar" size="2.3em" />
-              <h1 style={{margin: 0}}>ML Interview Prepper</h1>
+                              <h1 style={{margin: 0}}>IntrVw.</h1>
             </div>
             <nav>
                 <SignedIn>

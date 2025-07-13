@@ -24,8 +24,8 @@ if not os.getenv("OPENAI_API_KEY"):
 # Initialize LLM with conservative temperature for consistent outputs
 llm = ChatOpenAI(
     api_key=os.getenv("OPENAI_API_KEY"), 
-    temperature=0.3,  # Lower temperature for more consistent JSON outputs
-    model="gpt-4o-mini"  # Use cost-effective model
+    temperature=0.1,  # Lower temperature for more consistent JSON outputs
+    model="gpt-4.1-mini-2025-04-14"  # Use cost-effective model
 )
 
 # ========================================================================================

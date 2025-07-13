@@ -2,7 +2,7 @@ fastapi
 uvicorn
 sqlalchemy
 python-dotenv
-clerk-sdk-python
+clerk-backend-api
 openai
 pydantic
 langgraph

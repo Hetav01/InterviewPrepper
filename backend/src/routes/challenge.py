@@ -27,7 +27,7 @@ from ..database.db import (
 )
 from ..agents.ai_generator_agentic import (
     generate_interview_challenges,
-    generate_scenario_challenge,
+    generate_scenario_challenge as agentic_generate_scenario_challenge,
     evaluate_scenario_answer
 )
 from ..utils import authenticate_and_get_user_details
@@ -271,7 +271,8 @@ async def generate_scenario_challenge(
             )
 
         # Generate the challenge data using the AI agent
-        ai_generated_data = generate_scenario_challenge(
+        print(f"Calling agentic_generate_scenario_challenge with: topic={challenge_request.topic}, difficulty={challenge_request.difficulty}, num_questions={challenge_request.num_questions}")
+        ai_generated_data = agentic_generate_scenario_challenge(
             topic=challenge_request.topic,
             difficulty=challenge_request.difficulty,
             num_questions=challenge_request.num_questions

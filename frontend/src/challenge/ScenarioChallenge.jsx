@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useApi } from "../utils/Api";
 
 /**
  * Scenario Challenge Data Model Example:
  * {
  *   id: string,
  *   title: string, // The scenario prompt
+ *   questions: string, // JSON string of questions array
  *   correct_answer: string, // The ideal answer (optional, for backend)
  *   difficulty: string, // easy, medium, hard
  *   topic: string, // topic name
@@ -17,89 +19,228 @@ import React, { useState } from "react";
  */
 
 export function ScenarioChallenge({ challenge, topic, numQuestions, difficulty }) {
+  const { submitScenarioAnswer } = useApi();
+
   // Defensive check
-  if (!challenge || !challenge.questions) {
+  if (!challenge) {
     return (
       <div className="defensive-check-card">
         <span className="defensive-check-error">No scenario loaded.</span>
         <div className="defensive-check-info">
-          <div><strong>Topic:</strong> {topic || <span style={{ color: '#888' }}>N/A</span>}</div>
-          <div><strong>Number of Questions:</strong> {numQuestions || <span style={{ color: '#888' }}>N/A</span>}</div>
-          <div><strong>Difficulty:</strong> {difficulty || <span style={{ color: '#888' }}>N/A</span>}</div>
+                          <div><strong>Topic:</strong> {topic || <span className="placeholder-text">N/A</span>}</div>
+                <div><strong>Number of Questions:</strong> {numQuestions || <span className="placeholder-text">N/A</span>}</div>
+                <div><strong>Difficulty:</strong> {difficulty || <span className="placeholder-text">N/A</span>}</div>
         </div>
       </div>
     );
   }
 
-  // questions: array of scenario prompts
-  const questions = challenge.questions;
+  // Parse questions from JSON string
+  let questions = [];
+  try {
+    if (typeof challenge.questions === 'string') {
+      questions = JSON.parse(challenge.questions);
+    } else if (Array.isArray(challenge.questions)) {
+      questions = challenge.questions;
+    } else {
+      console.error('Invalid questions format:', challenge.questions);
+      questions = [];
+    }
+  } catch (error) {
+    console.error('Error parsing questions:', error);
+    questions = [];
+  }
+
+  // If no questions were parsed, show error
+  if (questions.length === 0) {
+    return (
+      <div className="defensive-check-card">
+        <span className="defensive-check-error">No questions available in this scenario.</span>
+        <div className="defensive-check-info">
+                          <div><strong>Topic:</strong> {topic || <span className="placeholder-text">N/A</span>}</div>
+                <div><strong>Difficulty:</strong> {difficulty || <span className="placeholder-text">N/A</span>}</div>
+        </div>
+      </div>
+    );
+  }
+
+  // State management
   const [answers, setAnswers] = useState(Array(questions.length).fill(""));
   const [feedbacks, setFeedbacks] = useState(Array(questions.length).fill(null));
   const [submitting, setSubmitting] = useState(Array(questions.length).fill(false));
+  const [errors, setErrors] = useState(Array(questions.length).fill(null));
 
-  // Simulate backend feedback (replace with API call)
-  const getFeedback = async (answer, idx) => {
-    // TODO: Replace with real API call
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const isCorrect = answer.trim().length > 10; // Dummy logic
-        resolve({
-          is_correct: isCorrect,
-          score: isCorrect ? 80 + Math.floor(Math.random() * 20) : 40 + Math.floor(Math.random() * 30),
-          feedback_text: isCorrect
-            ? "Great job! Your answer covered the key points. You demonstrated a solid understanding of the scenario. To improve, consider adding more real-world examples and structuring your response for clarity."
-            : "Your answer missed some important aspects. Try to address the scenario more directly, provide specific examples, and elaborate on your reasoning. Review the core concepts and try again."
-        });
-      }, 1200);
-    });
+  // Submit answer to backend API
+  const submitAnswer = async (questionIndex) => {
+    if (submitting[questionIndex] || feedbacks[questionIndex]) return;
+    
+    const userAnswer = answers[questionIndex];
+    if (!userAnswer.trim()) {
+      setErrors(prev => prev.map((e, i) => (i === questionIndex ? 'Please enter an answer before submitting.' : e)));
+      return;
+    }
+
+    try {
+      setSubmitting(prev => prev.map((s, i) => (i === questionIndex ? true : s)));
+      setErrors(prev => prev.map((e, i) => (i === questionIndex ? null : e)));
+
+      console.log('Submitting answer for scenario:', {
+        scenarioId: challenge.id,
+        questionIndex: questionIndex,
+        userAnswer: userAnswer.trim()
+      });
+
+      const response = await submitScenarioAnswer(
+        challenge.id,
+        questionIndex,
+        userAnswer.trim()
+      );
+
+      console.log('Answer submission response:', response);
+
+      // Create feedback object from API response
+      const feedback = {
+        is_correct: response.score >= 70, // Consider 70+ as correct
+        score: response.score,
+        feedback_text: response.feedback,
+        correct_answer: response.correct_answer
+      };
+
+      setFeedbacks(prev => prev.map((f, i) => (i === questionIndex ? feedback : f)));
+
+    } catch (error) {
+      console.error('Error submitting answer:', error);
+      setErrors(prev => prev.map((e, i) => (i === questionIndex ? 'Failed to submit answer: ' + error.message : e)));
+    } finally {
+      setSubmitting(prev => prev.map((s, i) => (i === questionIndex ? false : s)));
+    }
   };
 
   const handleInputChange = (idx, value) => {
     setAnswers(prev => prev.map((a, i) => (i === idx ? value : a)));
+    // Clear error when user starts typing
+    if (errors[idx]) {
+      setErrors(prev => prev.map((e, i) => (i === idx ? null : e)));
+    }
   };
 
-  const handleSubmit = async (idx) => {
-    if (submitting[idx] || feedbacks[idx]) return;
-    setSubmitting(prev => prev.map((s, i) => (i === idx ? true : s)));
-    const feedback = await getFeedback(answers[idx], idx);
-    setFeedbacks(prev => prev.map((f, i) => (i === idx ? feedback : f)));
-    setSubmitting(prev => prev.map((s, i) => (i === idx ? false : s)));
+  const getQuestionPrompt = (question, index) => {
+    // Handle different question formats
+    if (typeof question === 'string') {
+      return question;
+    } else if (question && question.prompt) {
+      return question.prompt;
+    } else if (question && question.question) {
+      return question.question;
+    } else {
+      return `Question ${index + 1}`;
+    }
   };
 
   return (
-    <div className="challenge-display">
-      <p><strong>Difficulty:</strong> {challenge.difficulty}</p>
-      <p className="challenge-title">{challenge.title}</p>
-      <div className="challenge-options">
-        {questions.map((q, idx) => (
-          <div key={idx} className="scenario-question-block" style={{ marginBottom: '2em', padding: '1em', background: 'var(--bg-color)', borderRadius: '0.375rem', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontWeight: 600, marginBottom: '0.7em', color: 'var(--text-color)' }}>Scenario {idx + 1}: {q.prompt}</div>
-            <textarea
-              className="scenario-answer-input"
-              style={{ width: '100%', minHeight: '4em', borderRadius: '0.375rem', border: '1.5px solid var(--border-color)', padding: '0.7em', fontSize: '1.05em', marginBottom: '0.7em', color: 'var(--text-color)', background: 'var(--bg-color)' }}
-              value={answers[idx]}
-              onChange={e => handleInputChange(idx, e.target.value)}
-              disabled={!!feedbacks[idx]}
-              placeholder="Write your answer here..."
-            />
-            <button
-              className="generate-challenge-btn"
-              style={{ marginTop: 0, marginBottom: '0.7em', minWidth: 120 }}
-              onClick={() => handleSubmit(idx)}
-              disabled={submitting[idx] || !!feedbacks[idx] || !answers[idx].trim()}
+    <div className="scenario-challenge-container">
+      <div className="scenario-challenge-header">
+        <div className="scenario-difficulty-badge">
+          <span className="difficulty-icon">⚡</span>
+          <span className={`difficulty-text ${challenge.difficulty.toLowerCase()}`}>
+            {challenge.difficulty}
+          </span>
+        </div>
+      </div>
+      
+      <div className="scenario-description-section">
+        <h3 className="scenario-description-title">🧠 Scenario</h3>
+        <p className="scenario-description-text">{challenge.title}</p>
+      </div>
+      
+      <div className="scenario-questions-section">
+        <h4 className="scenario-questions-title">❓ Questions & Answers</h4>
+        <div className="scenario-questions-container">
+          {questions.map((q, idx) => (
+            <div 
+              key={idx} 
+              className="scenario-question-card"
             >
-              {submitting[idx] ? 'Submitting...' : feedbacks[idx] ? 'Submitted' : 'Submit'}
-            </button>
-            {feedbacks[idx] && (
-              <div className="explanation" style={{ marginTop: '1em' }}>
-                <h4>Feedback</h4>
-                <div><strong>Score:</strong> {feedbacks[idx].score} / 100</div>
-                <div><strong>Result:</strong> {feedbacks[idx].is_correct ? <span style={{ color: '#22c55e' }}>Correct</span> : <span style={{ color: 'var(--error-color)' }}>Incorrect</span>}</div>
-                <p style={{ marginTop: '0.7em' }}>{feedbacks[idx].feedback_text}</p>
+              <div className="scenario-question-header">
+                <div className="question-number-badge">
+                  {idx + 1}
+                </div>
+                <h5 className="scenario-question-prompt">
+                  {getQuestionPrompt(q, idx)}
+                </h5>
               </div>
-            )}
-          </div>
-        ))}
+              
+              <div className="scenario-answer-section">
+                <label className="scenario-answer-label">Your Answer:</label>
+                <textarea
+                  className="scenario-answer-input"
+                  value={answers[idx]}
+                  onChange={e => handleInputChange(idx, e.target.value)}
+                  disabled={!!feedbacks[idx]}
+                  placeholder="Write your detailed answer here..."
+                />
+                
+                {errors[idx] && (
+                  <div className="scenario-error-message">
+                    {errors[idx]}
+                  </div>
+                )}
+                
+                <button
+                  className="scenario-submit-btn"
+                  onClick={() => submitAnswer(idx)}
+                  disabled={submitting[idx] || !!feedbacks[idx] || !answers[idx].trim()}
+                >
+                  {submitting[idx] ? (
+                    <>
+                      <span className="submit-spinner"></span>
+                      Submitting...
+                    </>
+                  ) : feedbacks[idx] ? (
+                    <>
+                      <span className="submit-checkmark">✓</span>
+                      Submitted
+                    </>
+                  ) : (
+                    'Submit Answer'
+                  )}
+                </button>
+              </div>
+              
+              {feedbacks[idx] && (
+                <div className="scenario-feedback-section">
+                  <div className="feedback-header">
+                    <h4 className="feedback-title">🤖 AI Feedback</h4>
+                    <div className="feedback-score-badge">
+                      <span className="score-value">{feedbacks[idx].score}/100</span>
+                      <span className={`score-status ${feedbacks[idx].is_correct ? 'correct' : 'needs-improvement'}`}>
+                        {feedbacks[idx].is_correct ? '✓ Good Answer' : '✗ Needs Improvement'}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="feedback-content">
+                    <div className="feedback-text-section">
+                      <h5 className="feedback-section-title">📝 Detailed Feedback</h5>
+                      <div className="feedback-text-content">
+                        <p>{feedbacks[idx].feedback_text}</p>
+                      </div>
+                    </div>
+                    
+                    {feedbacks[idx].correct_answer && (
+                      <div className="suggested-answer-section">
+                        <h5 className="feedback-section-title">💡 Suggested Answer</h5>
+                        <div className="suggested-answer-content">
+                          <p>{feedbacks[idx].correct_answer}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

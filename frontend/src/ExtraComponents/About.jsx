@@ -57,7 +57,7 @@ export default function About() {
           <div className="about-logo-container">
             <LogoBot className="about-logo" gradientId="about-logo-gradient" size={80} />
           </div>
-          <h1 className="about-title">About ML Interview Prepper</h1>
+                          <h1 className="about-title">About IntrVw.</h1>
           <button className="about-back-btn" onClick={handleBackToHome}>
             ← Back to Home
           </button>
@@ -66,9 +66,9 @@ export default function About() {
         {/* Content */}
         <div className="about-content">
           <div className="about-section">
-            <h2 className="about-section-title">What is ML Interview Prepper?</h2>
+            <h2 className="about-section-title">What is IntrVw.?</h2>
             <p className="about-text">
-              ML Interview Prepper is a cutting-edge platform designed to help aspiring machine learning engineers 
+                              IntrVw. is a cutting-edge platform designed to help aspiring machine learning engineers 
               and data scientists ace their technical interviews. Our AI-powered system generates personalized 
               challenges across multiple domains including neural networks, computer vision, natural language 
               processing, and more.
@@ -149,7 +149,7 @@ export default function About() {
             <h2 className="about-section-title">Built For Success</h2>
             <p className="about-text">
               Whether you're preparing for FAANG interviews, startup technical rounds, or simply want to 
-              strengthen your ML fundamentals, ML Interview Prepper provides the comprehensive practice 
+                              strengthen your ML fundamentals, IntrVw. provides the comprehensive practice 
               you need to succeed. Our platform is designed with modern web technologies to ensure a 
               smooth, responsive experience across all devices.
             </p>

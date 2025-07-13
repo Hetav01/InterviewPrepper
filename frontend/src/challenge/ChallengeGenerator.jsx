@@ -2,33 +2,169 @@ import "react"
 import { useState, useEffect } from "react";
 import { InterviewChallenge } from "./InterviewChallenge";
 import { ScenarioChallenge } from "./ScenarioChallenge";
+import { useApi } from "../utils/Api";
 
 export function ChallengeGenerator() {
-    const [challenge, setChallenge] = useState(null);
+    // State for current challenge data
+    const [currentChallenges, setCurrentChallenges] = useState([]);
+    const [currentChallengeIndex, setCurrentChallengeIndex] = useState(0);
+    
+    // UI state
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [difficulty, setDifficulty] = useState("easy");
-    const [quota, setQuota] = useState(10);
-    const [challengeType, setChallengeType] = useState("mcq"); // 'mcq' or 'scenario'
-    const  [numQuestions, setNumQuestions] = useState(5);
     
-    const fetchQuota = async() => {
-        // To be implemented
-    }
+    // Form state
+    const [difficulty, setDifficulty] = useState("Easy");
+    const [topic, setTopic] = useState("");
+    const [challengeType, setChallengeType] = useState("mcq"); // 'mcq' or 'scenario'
+    const [numQuestions, setNumQuestions] = useState(5);
+    const [selectedAnswers, setSelectedAnswers] = useState([]);
 
-    const generateChallenge = async() => {
-        // To be implemented
-    }
+    // Quota state
+    const [quotas, setQuotas] = useState({
+        interview: { quota_remaining: 0, total_daily_quota: 10 },
+        scenario: { quota_remaining: 0, total_daily_quota: 10 }
+    });
+    const [quotaLoading, setQuotaLoading] = useState(true);
 
-    const getNextResetTime = async() => {
-        // To be implemented
-    }
+    const { 
+        generateChallenge, 
+        ensureQuotasInitialized, 
+        getAllQuotas,
+        getUserStats 
+    } = useApi();
 
+    // Initialize quotas on component mount
+    useEffect(() => {
+        initializeComponent();
+    }, []);
+    
+    // Auto-adjust num questions when challenge type changes
     useEffect(() => {
         if (challengeType === 'scenario' && numQuestions > 3) {
             setNumQuestions(3);
         }
     }, [challengeType]);
+
+    const initializeComponent = async () => {
+        try {
+            setQuotaLoading(true);
+            await fetchQuotas();
+        } catch (error) {
+            console.error('Failed to initialize component:', error);
+            setError('Failed to load quota information. Please refresh the page.');
+        } finally {
+            setQuotaLoading(false);
+        }
+    };
+
+    const fetchQuotas = async () => {
+        try {
+            const quotaData = await ensureQuotasInitialized();
+            setQuotas(quotaData.quotas);
+            setError(null);
+        } catch (error) {
+            console.error('Error fetching quotas:', error);
+            setError('Failed to load quota information: ' + error.message);
+        }
+    };
+
+    const generateChallengeHandler = async () => {
+        // Validation
+        if (!topic.trim()) {
+            setError('Please enter a topic for your challenge.');
+            return;
+        }
+
+        if (topic.trim().length < 2) {
+            setError('Topic must be at least 2 characters long.');
+            return;
+        }
+
+        // Check quota
+        const currentQuotaType = challengeType === 'mcq' ? 'interview' : 'scenario';
+        if (quotas[currentQuotaType]?.quota_remaining <= 0) {
+            setError(`You have reached your daily quota for ${challengeType === 'mcq' ? 'interview' : 'scenario'} challenges. Please try again tomorrow.`);
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            setError(null);
+            setCurrentChallenges([]);
+            setCurrentChallengeIndex(0);
+
+            console.log('Generating challenge with params:', {
+                challengeType: challengeType === 'mcq' ? 'interview' : challengeType,
+                difficulty,
+                topic: topic.trim(),
+                numQuestions
+            });
+
+            const result = await generateChallenge(
+                challengeType === 'mcq' ? 'interview' : challengeType,
+                difficulty,
+                topic.trim(),
+                numQuestions
+            );
+
+            console.log('Challenge generation result:', result);
+
+            if (result.challenges && result.challenges.length > 0) {
+                setCurrentChallenges(result.challenges);
+                setCurrentChallengeIndex(0);
+                setSelectedAnswers(Array(result.challenges.length).fill(null));
+                
+                // Update quotas after successful generation
+                await fetchQuotas();
+            } else {
+                setError('No challenges were generated. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error generating challenge:', error);
+            setError('Failed to generate challenge: ' + error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const getNextResetTime = () => {
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        
+        const diffMs = tomorrow - now;
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        
+        return `${diffHours}h ${diffMinutes}m`;
+    };
+
+    const getCurrentChallenge = () => {
+        if (currentChallenges.length === 0) return null;
+        return currentChallenges[currentChallengeIndex];
+    };
+
+    const goToNextChallenge = () => {
+        if (currentChallengeIndex < currentChallenges.length - 1) {
+            setCurrentChallengeIndex(currentChallengeIndex + 1);
+        }
+    };
+
+    const goToPreviousChallenge = () => {
+        if (currentChallengeIndex > 0) {
+            setCurrentChallengeIndex(currentChallengeIndex - 1);
+        }
+    };
+
+    const handleSelectAnswer = (questionIndex, answerIndex) => {
+        setSelectedAnswers(prev => {
+            const updated = [...prev];
+            updated[questionIndex] = answerIndex;
+            return updated;
+        });
+    };
 
     // Modern orange slider switch for challenge type selection
     function renderChallengeTypeSelector() {
@@ -79,22 +215,22 @@ export function ChallengeGenerator() {
                     }}
                     className="num-questions-input"
                 />
-                <span style={{ marginLeft: '0.5em', color: 'var(--text-color)', fontSize: '0.95em' }}>
+                <span className="max-questions-hint">
                     (max {max})
                 </span>
             </div>
         );
     }
 
-    function renderChallengeInput() {
+    function renderTopicInput() {
         return (
             <div className="challenge-input-ui">
                 <label htmlFor="challenge-input">Topic Name:</label>
                 <input
                     id="challenge-input"
                     type="text"
-                    value={challenge}
-                    onChange={e => setChallenge(e.target.value)}
+                    value={topic}
+                    onChange={e => setTopic(e.target.value)}
                     className="challenge-input"
                     placeholder="e.g. Neural Networks, SVM, etc."
                 />
@@ -102,60 +238,182 @@ export function ChallengeGenerator() {
         );
     }
 
+    function renderQuotaInfo() {
+        if (quotaLoading) {
+            return <div className="quota-info">Loading quota information...</div>;
+        }
+
+        const currentQuotaType = challengeType === 'mcq' ? 'interview' : 'scenario';
+        const currentQuota = quotas[currentQuotaType];
+        
+        return (
+            <div className="quota-info">
+                <div className="quota-display">
+                    <span className="quota-text">
+                        {challengeType === 'mcq' ? 'Interview' : 'Scenario'} Challenges remaining: 
+                        <strong> {currentQuota?.quota_remaining || 0}/{currentQuota?.total_daily_quota || 10}</strong>
+                    </span>
+                    {currentQuota?.quota_remaining === 0 && (
+                        <span className="quota-reset">
+                            Resets in: {getNextResetTime()}
+                        </span>
+                    )}
+                </div>
+                {currentQuota?.quota_remaining === 0 && (
+                    <div className="quota-limit-message">
+                        <div className="quota-limit-text">
+                            <strong>Sorry! You have reached your quota limit</strong>
+                            <p>Your quota will reset in 24 hours. Please try again later!</p>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    function renderChallengeNavigation() {
+        if (currentChallenges.length <= 1) return null;
+
+        return (
+            <div className="challenge-navigation">
+                <button 
+                    onClick={goToPreviousChallenge}
+                    disabled={currentChallengeIndex === 0}
+                    className="nav-button"
+                >
+                    ← Previous
+                </button>
+                <span className="challenge-counter">
+                    {currentChallengeIndex + 1} of {currentChallenges.length}
+                </span>
+                <button 
+                    onClick={goToNextChallenge}
+                    disabled={currentChallengeIndex === currentChallenges.length - 1}
+                    className="nav-button"
+                >
+                    Next →
+                </button>
+            </div>
+        );
+    }
+
     // Function to render the correct challenge component based on challengeType
-    function renderChallengeComponent(type) {
-        if (type === "mcq") {
-            return <InterviewChallenge challenge={challenge} topic={challenge} numQuestions={numQuestions} difficulty={difficulty} />;
+    function renderChallengeComponent() {
+        const currentChallenge = getCurrentChallenge();
+        
+        if (!currentChallenge) {
+            return (
+                <div className="no-challenge-message">
+                    <p>No challenge generated yet. Fill out the form above and click "Generate Challenge" to get started!</p>
+                </div>
+            );
+        }
+
+        if (challengeType === "mcq") {
+            return (
+                <InterviewChallenge 
+                    key={currentChallenge.id || currentChallengeIndex}
+                    challenge={currentChallenge} 
+                    topic={topic} 
+                    numQuestions={numQuestions} 
+                    difficulty={difficulty} 
+                    selectedOption={selectedAnswers[currentChallengeIndex]}
+                    onSelectOption={answerIndex => handleSelectAnswer(currentChallengeIndex, answerIndex)}
+                />
+            );
         } else {
-            return <ScenarioChallenge challenge={challenge} topic={challenge} numQuestions={numQuestions} difficulty={difficulty} />;
+            return (
+                <ScenarioChallenge 
+                    challenge={currentChallenge} 
+                    topic={topic} 
+                    numQuestions={numQuestions} 
+                    difficulty={difficulty} 
+                />
+            );
         }
     }
 
     return (
-        <div className="challenge-container challenge-generator-ui">
-            <h2 className="challenge-title">Interview Challenge Generator</h2>
-            <div className="challenge-ui-panel">
-                {renderChallengeTypeSelector()}
-                <div className="challenge-common-row">
-                    {renderNumQuestionsInput()}
-                    <div className="difficulty-selector-ui">
-                        <label htmlFor="difficulty-select">Difficulty:</label>
-                        <select
-                            id="difficulty-select"
-                            value={difficulty}
-                            onChange={e => setDifficulty(e.target.value)}
-                            className="difficulty-select"
-                        >
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
-                        </select>
-                    </div>
-                </div>
-                {renderChallengeInput()}
-                <button
-                    className="generate-challenge-btn"
-                    style={{
-                        boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)',
-                        border: 'none',
-                        borderRadius: '0.5em',
-                        fontWeight: 600,
-                        fontSize: '1.1rem',
-                        padding: '0.7em 2.2em',
-                        margin: '2em 0 0.5em 0',
-                        cursor: 'pointer',
-                        transition: 'background 0.2s, box-shadow 0.2s',
-                    }}
-                    onClick={generateChallenge}
-                    disabled={isLoading}
-                >
-                    {isLoading ? 'Generating...' : 'Generate Challenge'}
-                </button>
-                {/* Error message */}
-                {error && <div className="challenge-error-message">{error}</div>}
+        <div className="challenge-generator-panel">
+            <div className="challenge-generator-header">
+                <h1 className="challenge-title">Interview Challenge Generator</h1>
+                <p>Generate personalized ML interview challenges to enhance your preparation</p>
             </div>
-            <div className="challenge-content-panel">
-                {renderChallengeComponent(challengeType)}
+            
+            <div className="challenge-generator-container">
+                <div className="challenge-ui-panel">
+                    {renderChallengeTypeSelector()}
+                    {renderQuotaInfo()}
+                    
+                    <div className="challenge-form-row">
+                        <div className="form-control">
+                            <label htmlFor="num-questions">Questions (max {challengeType === 'scenario' ? 3 : 7}):</label>
+                            <input
+                                id="num-questions"
+                                type="number"
+                                min={1}
+                                max={challengeType === 'scenario' ? 3 : 7}
+                                value={numQuestions}
+                                onChange={e => {
+                                    let val = Number(e.target.value);
+                                    if (val < 1) val = 1;
+                                    if (val > (challengeType === 'scenario' ? 3 : 7)) val = challengeType === 'scenario' ? 3 : 7;
+                                    setNumQuestions(val);
+                                }}
+                                className="form-input small"
+                            />
+                        </div>
+                        
+                        <div className="form-control">
+                            <label htmlFor="difficulty-select">Difficulty:</label>
+                            <select
+                                id="difficulty-select"
+                                value={difficulty}
+                                onChange={e => setDifficulty(e.target.value)}
+                                className="form-input small"
+                            >
+                                <option value="Easy">Easy</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                        
+                        <div className="form-control topic-control">
+                            <label htmlFor="challenge-input">Topic Name:</label>
+                            <input
+                                id="challenge-input"
+                                type="text"
+                                value={topic}
+                                onChange={e => setTopic(e.target.value)}
+                                className="form-input topic-input"
+                                placeholder="e.g. Neural Networks, SVM, etc."
+                            />
+                        </div>
+                        
+                        <div className="form-control">
+                            <label>&nbsp;</label>
+                            <button
+                                className="generate-challenge-btn"
+                                onClick={generateChallengeHandler}
+                                disabled={isLoading || quotaLoading}
+                            >
+                                {isLoading ? 'Generating...' : 'Generate Challenge'}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {/* Error message */}
+                    {error && (
+                        <div className="challenge-error-message">
+                            {error}
+                        </div>
+                    )}
+                </div>
+                
+                <div className="challenge-content-panel">
+                    {renderChallengeNavigation()}
+                    {renderChallengeComponent()}
+                </div>
             </div>
         </div>
     );
