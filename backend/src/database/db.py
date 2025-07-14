@@ -7,7 +7,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from . import models
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time as dt_time
 import logging
 
 # Set up logging for database operations
@@ -87,39 +87,39 @@ def create_challenge_quota(db: Session, user_id: str, challenge_type: str):
 
 def reset_quota_if_needed(db: Session, quota: models.ChallengeQuota):
     """
-    Reset quota to full (10) if 24 hours have passed since last reset.
-    
-    Args:
-        db: Database session
-        quota: ChallengeQuota object to potentially reset
-    
-    Returns:
-        Updated ChallengeQuota object
-    
-    Raises:
-        ValueError: Invalid quota parameter
-        RuntimeError: Database operation failed
+    Reset quota to full (10) at midnight (12:00:00am) every day, regardless of last usage.
     """
-    # INPUT VALIDATION
     if not quota:
         raise ValueError("quota cannot be None")
-    
     now = datetime.now()
-    
-    # Check if 24 hours have passed since last reset
-    if now - quota.last_reset_date >= timedelta(hours=24):
+    today_midnight = datetime.combine(now.date(), dt_time.min)
+    if quota.last_reset_date < today_midnight:
         try:
-            quota.quota_remaining = 10  # Reset to full quota
-            quota.last_reset_date = now
+            quota.quota_remaining = 10
+            quota.last_reset_date = today_midnight
             db.commit()
             db.refresh(quota)
-            logger.info(f"24-hour quota reset for user {quota.user_id}, type {quota.challenge_type}")
+            logger.info(f"Midnight quota reset for user {quota.user_id}, type {quota.challenge_type}")
         except SQLAlchemyError as e:
             db.rollback()
             logger.error(f"Failed to reset quota for user {quota.user_id}: {str(e)}")
             raise RuntimeError(f"Database error while resetting quota: {str(e)}")
-
     return quota
+
+# ADMIN/MAINTENANCE: Force reset all quotas to 10 immediately
+
+def force_reset_all_quotas(db: Session):
+    try:
+        all_quotas = db.query(models.ChallengeQuota).all()
+        for quota in all_quotas:
+            quota.quota_remaining = 10
+            quota.last_reset_date = datetime.combine(datetime.now().date(), dt_time.min)
+        db.commit()
+        logger.info("Force reset all quotas to 10 for all users and types.")
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f"Failed to force reset all quotas: {str(e)}")
+        raise RuntimeError(f"Database error while force resetting all quotas: {str(e)}")
 
 # ========================================================================================
 # INTERVIEW CHALLENGE FUNCTIONS

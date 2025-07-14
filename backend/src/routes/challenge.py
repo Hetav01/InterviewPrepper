@@ -171,7 +171,7 @@ async def generate_interview_challenge(
         # Ensure quota exists and check availability
         quota = _ensure_quota_exists_and_reset(db, user_id, "interview")
         
-        if quota.quota_remaining <= 0:
+        if quota.quota_remaining <= challenge_request.num_questions:    
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="You have reached your daily quota for interview challenges"
@@ -211,7 +211,9 @@ async def generate_interview_challenge(
             })
         
         # Update quota and commit transaction
-        quota.quota_remaining -= 1
+        quota.quota_remaining -= challenge_request.num_questions
+        if quota.quota_remaining < 0:
+            quota.quota_remaining = 0
         db.commit()
         
         return {
@@ -264,7 +266,7 @@ async def generate_scenario_challenge(
         # Ensure quota exists and check availability
         quota = _ensure_quota_exists_and_reset(db, user_id, "scenario")
         
-        if quota.quota_remaining <= 0:
+        if quota.quota_remaining <= challenge_request.num_questions:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="You have reached your daily quota for scenario challenges"
@@ -291,7 +293,9 @@ async def generate_scenario_challenge(
         )
         
         # Update quota and commit transaction
-        quota.quota_remaining -= 1
+        quota.quota_remaining -= challenge_request.num_questions
+        if quota.quota_remaining < 0:
+            quota.quota_remaining = 0
         db.commit()
         
         # Return consistent format with interview challenges (array of challenges)
@@ -493,6 +497,8 @@ async def get_quota(challenge_type: str, request: Request, db: Session = Depends
             detail=f"No quota found for challenge type '{challenge_type}'. Use POST /quotas/initialize to create quotas."
         )
     
+    # Ensure quota is reset at midnight
+    quota = reset_quota_if_needed(db, quota)
     return {
         "user_id": user_id,
         "challenge_type": challenge_type,
@@ -546,6 +552,8 @@ async def get_all_quotas(request: Request, db: Session = Depends(get_db)):
         if not quota:
             missing_quotas.append(challenge_type)
         else:
+            # Ensure quota is reset at midnight
+            quota = reset_quota_if_needed(db, quota)
             quotas[challenge_type] = {
                 "quota_remaining": quota.quota_remaining,
                 "last_reset_date": quota.last_reset_date.isoformat(),
