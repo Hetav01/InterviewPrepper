@@ -138,6 +138,18 @@ html, body {
   color: var(--primary-color);
 }
 
+button:disabled,
+input:disabled,
+select:disabled,
+.form-control:disabled,
+textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+
 .app-main {
   flex: 1;
   width: 100%;
@@ -1544,9 +1556,21 @@ body:not(.dark-mode) .slider-track {
 
 .about-features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .about-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .about-features {
+    grid-template-columns: 1fr;
+  }
 }
 
 .about-feature-card {
@@ -3110,11 +3134,40 @@ body:not(.dark-mode) .date-group .date-header {
    CHALLENGE GENERATOR PANEL STYLES (matching HistoryPanel)
    ===================================================== */
 
+.challenge-loading-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 2rem 0;
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.challenge-spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #e0e7ef;
+  border-top: 5px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.2rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
 .challenge-generator-panel {
   min-height: 100vh;
   padding: 2rem;
   background: linear-gradient(135deg, var(--bg-color) 0%, rgba(139, 92, 246, 0.03) 100%);
   transition: all 0.3s ease;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px
 }
 
 .challenge-generator-header {
@@ -3148,7 +3201,7 @@ body:not(.dark-mode) .date-group .date-header {
 }
 
 .challenge-generator-container:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1.5px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
@@ -3237,6 +3290,10 @@ body:not(.dark-mode) .date-group .date-header {
   left: calc(50% + 0.05em);
 }
 
+.toggle-handle:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4), 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
 /* Light mode track */
 body:not(.dark-mode) .toggle-track {
   background: var(--bg-secondary);
@@ -3279,6 +3336,7 @@ body:not(.dark-mode) .toggle-label.active {
 .quota-info {
   display: flex;
   justify-content: center;
+  flex-direction: column;
 }
 
 .quota-display {
@@ -3447,7 +3505,6 @@ body:not(.dark-mode) .toggle-label.active {
 }
 
 .generate-challenge-btn:hover {
-  transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4), 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -4431,5 +4488,36 @@ body:not(.dark-mode) .date-header.clickable:hover {
   letter-spacing: 0.01em;
 }
 
+footer {    /* in dark mode */
+  width: 100%;
+  background-color: rgb(31, 41, 55);   /* Matches .app-main */
+  color: var(--bg-color);      /* Matches .app-main */
+  margin: 0;
+  box-sizing: border-box;
+}
 
 
+.global-copyright {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-decoration: none;
+  transition: color 0.2s, opacity 0.2s;
+  font-family: 'Product Sans', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  
+}
+.global-copyright:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+/* Already defined, but ensure it's visible */
+.copyright-symbol {
+  font-size: 1.2em;
+  vertical-align: middle;
+}

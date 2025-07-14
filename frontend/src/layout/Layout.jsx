@@ -52,7 +52,7 @@ export function Layout() {
                     <Link to="/app">Generate Preperation Challenge</Link>
                     <Link to="/history">History</Link>
                     <Link to="/about">About</Link>
-                    <a href="#" className="portfolio-link">Portfolio</a>
+                    <a href="#" className="portfolio-link">My Portfolio!</a>
                     <UserButton />
                 </SignedIn>
                 <button
@@ -91,6 +91,11 @@ export function Layout() {
             <Outlet />  
         </SignedIn>
     </main>
+    <footer>
+      <a className="global-copyright" href="" target="_blank" rel="noopener noreferrer">
+        Hetav Patel <span className="copyright-symbol">©</span> 2025
+      </a>
+    </footer>
   </div>;
 }
 

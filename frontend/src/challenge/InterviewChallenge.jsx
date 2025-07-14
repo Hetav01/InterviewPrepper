@@ -75,7 +75,7 @@ export function InterviewChallenge({challenge, showExplanation = false, topic, n
       
       <div className="mcq-options-section">
         <h4 className="mcq-options-title">📝 Choose the correct answer:</h4>
-        <div className="mcq-options-container">
+        <div className="mcq-options-container" >
           {options.map((option, index) => (
             <div
               key={index}

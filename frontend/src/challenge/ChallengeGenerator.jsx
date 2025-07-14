@@ -46,6 +46,9 @@ export function ChallengeGenerator() {
         }
     }, [challengeType]);
 
+    const currentQuotaType = challengeType === 'mcq' ? 'interview' : 'scenario';
+    const isQuotaDepleted = quotas?.[currentQuotaType]?.quota_remaining <= 0;
+
     const initializeComponent = async () => {
         try {
             setQuotaLoading(true);
@@ -195,48 +198,6 @@ export function ChallengeGenerator() {
         );
     }
 
-    // Add number of questions input, with max depending on challengeType
-    function renderNumQuestionsInput() {
-        const max = challengeType === 'scenario' ? 3 : 7;
-        return (
-            <div className="num-questions-ui">
-                <label htmlFor="num-questions">Number of Questions:</label>
-                <input
-                    id="num-questions"
-                    type="number"
-                    min={1}
-                    max={max}
-                    value={numQuestions}
-                    onChange={e => {
-                        let val = Number(e.target.value);
-                        if (val < 1) val = 1;
-                        if (val > max) val = max;
-                        setNumQuestions(val);
-                    }}
-                    className="num-questions-input"
-                />
-                <span className="max-questions-hint">
-                    (max {max})
-                </span>
-            </div>
-        );
-    }
-
-    function renderTopicInput() {
-        return (
-            <div className="challenge-input-ui">
-                <label htmlFor="challenge-input">Topic Name:</label>
-                <input
-                    id="challenge-input"
-                    type="text"
-                    value={topic}
-                    onChange={e => setTopic(e.target.value)}
-                    className="challenge-input"
-                    placeholder="e.g. Neural Networks, SVM, etc."
-                />
-            </div>
-        );
-    }
 
     function renderQuotaInfo() {
         if (quotaLoading) {
@@ -263,7 +224,7 @@ export function ChallengeGenerator() {
                     <div className="quota-limit-message">
                         <div className="quota-limit-text">
                             <strong>Sorry! You have reached your quota limit</strong>
-                            <p>Your quota will reset in 24 hours. Please try again later!</p>
+                            <p>Your quota will reset in 24 hours.</p>
                         </div>
                     </div>
                 )}
@@ -300,6 +261,15 @@ export function ChallengeGenerator() {
     // Function to render the correct challenge component based on challengeType
     function renderChallengeComponent() {
         const currentChallenge = getCurrentChallenge();
+
+        if (isLoading) {
+            return (
+                <div className="challenge-loading-message">
+                    <div className="loading-spinner"></div>
+                    <p>Generating your challenge...</p>
+                </div>
+            );
+        }
         
         if (!currentChallenge) {
             return (
@@ -319,6 +289,7 @@ export function ChallengeGenerator() {
                     difficulty={difficulty} 
                     selectedOption={selectedAnswers[currentChallengeIndex]}
                     onSelectOption={answerIndex => handleSelectAnswer(currentChallengeIndex, answerIndex)}
+                    disabled={isQuotaDepleted}
                 />
             );
         } else {
@@ -328,6 +299,7 @@ export function ChallengeGenerator() {
                     topic={topic} 
                     numQuestions={numQuestions} 
                     difficulty={difficulty} 
+                    disabled= {isQuotaDepleted}
                 />
             );
         }
@@ -336,7 +308,7 @@ export function ChallengeGenerator() {
     return (
         <div className="challenge-generator-panel">
             <div className="challenge-generator-header">
-                <h1 className="challenge-title">Interview Challenge Generator</h1>
+                <h1 className="challenge-title">Ace your IntrVw!</h1>
                 <p>Generate personalized ML interview challenges to enhance your preparation</p>
             </div>
             
@@ -347,7 +319,7 @@ export function ChallengeGenerator() {
                     
                     <div className="challenge-form-row">
                         <div className="form-control">
-                            <label htmlFor="num-questions">Questions (max {challengeType === 'scenario' ? 3 : 7}):</label>
+                            <label htmlFor="num-questions" disabled={isQuotaDepleted}>Questions (max {challengeType === 'scenario' ? 3 : 7}):</label>
                             <input
                                 id="num-questions"
                                 type="number"
@@ -360,17 +332,19 @@ export function ChallengeGenerator() {
                                     if (val > (challengeType === 'scenario' ? 3 : 7)) val = challengeType === 'scenario' ? 3 : 7;
                                     setNumQuestions(val);
                                 }}
+                                disabled={isQuotaDepleted}
                                 className="form-input small"
                             />
                         </div>
                         
                         <div className="form-control">
-                            <label htmlFor="difficulty-select">Difficulty:</label>
+                            <label htmlFor="difficulty-select" disabled={isQuotaDepleted}>Difficulty:</label>
                             <select
                                 id="difficulty-select"
                                 value={difficulty}
                                 onChange={e => setDifficulty(e.target.value)}
                                 className="form-input small"
+                                disabled={isQuotaDepleted}
                             >
                                 <option value="Easy">Easy</option>
                                 <option value="Medium">Medium</option>
@@ -378,8 +352,8 @@ export function ChallengeGenerator() {
                             </select>
                         </div>
                         
-                        <div className="form-control topic-control">
-                            <label htmlFor="challenge-input">Topic Name:</label>
+                        <div className="form-control topic-control" disabled={isQuotaDepleted}>
+                            <label htmlFor="challenge-input" disabled={isQuotaDepleted}>Topic Name:</label>
                             <input
                                 id="challenge-input"
                                 type="text"
@@ -387,6 +361,7 @@ export function ChallengeGenerator() {
                                 onChange={e => setTopic(e.target.value)}
                                 className="form-input topic-input"
                                 placeholder="e.g. Neural Networks, SVM, etc."
+                                disabled={isQuotaDepleted}
                             />
                         </div>
                         
@@ -395,7 +370,7 @@ export function ChallengeGenerator() {
                             <button
                                 className="generate-challenge-btn"
                                 onClick={generateChallengeHandler}
-                                disabled={isLoading || quotaLoading}
+                                disabled={isLoading || quotaLoading || isQuotaDepleted}
                             >
                                 {isLoading ? 'Generating...' : 'Generate Challenge'}
                             </button>
