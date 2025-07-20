@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
-import { Outlet, Link, Navigate } from "react-router-dom";
+import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import LogoBot from '../utils/LogoBot.jsx';
 import { useSessionTimeout } from '../utils/SessionManager.js';
 
 export function Layout() {
   // Initialize session timeout
   useSessionTimeout();
+  const navigate = useNavigate();
   
   const [darkMode, setDarkMode] = useState(() => {
     // Check localStorage or system preference
@@ -44,7 +45,19 @@ export function Layout() {
     <div className="app-layout">
       <header className="app-header">
         <div className="header-content">
-          <div style={{ display: "flex", alignItems: "center", gap: "0.7em" }}>
+          <div 
+            style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "0.7em",
+              cursor: "pointer",
+              transition: "opacity 0.2s ease"
+            }}
+            onClick={() => navigate('/')}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = "0.8"}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+            title="Go to Home"
+          >
             <LogoBot
               className="navbar-logo"
               gradientId="logo-gradient-navbar"

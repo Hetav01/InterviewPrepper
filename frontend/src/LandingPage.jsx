@@ -5,6 +5,7 @@ import './App.css';
 import LogoBot from './utils/LogoBot.jsx';
 import NET from 'vanta/dist/vanta.net.min';
 import * as THREE from 'three';
+import { useLoading } from './utils/LoadingContext.jsx';
 // import TechStackAnimation from './ExtraComponents/TechStackAnimation';
 
 export default function LandingPage() {
@@ -17,6 +18,7 @@ export default function LandingPage() {
   const [fadeOut, setFadeOut] = useState(false);
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
+  const { showPageLoading, hideLoading } = useLoading();
 
   // Use auth hook consistently
   const { isSignedIn } = useAuth();
@@ -25,6 +27,14 @@ export default function LandingPage() {
       navigate('/app', { replace: true });
     }
   }, [isSignedIn, navigate]);
+
+  // Show page loading when component mounts
+  useEffect(() => {
+    showPageLoading({
+      message: "Loading landing page...",
+      timeout: 1000
+    });
+  }, []);
 
   // Vanta NET effect - optimized to not block animations
   useEffect(() => {
@@ -79,7 +89,10 @@ export default function LandingPage() {
 
   // Faster initial load
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 100); // Reduced from 300ms
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+      hideLoading('page'); // Hide page loading when content is ready
+    }, 100); // Reduced from 300ms
     return () => clearTimeout(timer);
   }, []);
 

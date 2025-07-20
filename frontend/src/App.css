@@ -1571,7 +1571,7 @@ body:not(.dark-mode) .slider-track {
   padding: 2rem;
   max-width: 95vw;
   margin: 0 auto;
-  background: linear-gradient(135deg, var(--bg-color) 0%, rgba(139, 92, 246, 0.03) 100%);
+  background: linear-gradient(135deg, rgb(17, 24, 39) 0%, rgba(139, 92, 246, 0.03) 100%);
   backdrop-filter: blur(10px);
   border-radius: 10px;
   margin-top: 2rem;

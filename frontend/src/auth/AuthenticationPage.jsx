@@ -1,5 +1,6 @@
 import "react";
 import { SignIn, SignUp, SignedIn, SignedOut } from "@clerk/clerk-react";
+import { Navigate } from "react-router-dom";
 
 export function AuthenticationPage() {
   return <div className="auth-container">
@@ -8,9 +9,7 @@ export function AuthenticationPage() {
         <SignUp routing="path" path="/sign-up" />
     </SignedOut>
     <SignedIn>
-        <div className="redirect-message">
-            <p>You are already signed in.</p>
-        </div>
+        <Navigate to="/app" replace />
     </SignedIn>
   </div>
 }
