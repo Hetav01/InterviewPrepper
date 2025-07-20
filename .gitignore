@@ -15,3 +15,8 @@ frontend/dist/
 .env
 
 *.db
+
+node_modules/*
+
+package-lock.json
+package.json

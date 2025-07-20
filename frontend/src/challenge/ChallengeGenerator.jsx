@@ -31,7 +31,7 @@ export function ChallengeGenerator() {
         generateChallenge, 
         ensureQuotasInitialized, 
         getAllQuotas,
-        getUserStats 
+        getUserStats
     } = useApi();
 
     // Initialize quotas on component mount
@@ -129,6 +129,23 @@ export function ChallengeGenerator() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const resetChallengeHandler = () => {
+        console.log('Resetting challenge content and settings...');
+        
+        // Reset all challenge-related state
+        setCurrentChallenges([]);
+        setCurrentChallengeIndex(0);
+        setSelectedAnswers([]);
+        setError(null);
+        
+        // Reset form state completely
+        setTopic('');
+        setDifficulty('Easy');
+        setNumQuestions(challengeType === 'scenario' ? 3 : 5);
+        
+        console.log('Challenge content and settings reset');
     };
 
     const getNextResetTime = () => {
@@ -367,13 +384,15 @@ export function ChallengeGenerator() {
                         
                         <div className="form-control">
                             <label>&nbsp;</label>
-                            <button
-                                className="generate-challenge-btn"
-                                onClick={generateChallengeHandler}
-                                disabled={isLoading || quotaLoading || isQuotaDepleted}
-                            >
-                                {isLoading ? 'Generating...' : 'Generate Challenge'}
-                            </button>
+                            <div className="button-group">
+                                <button
+                                    className="generate-challenge-btn"
+                                    onClick={generateChallengeHandler}
+                                    disabled={isLoading || quotaLoading || isQuotaDepleted}
+                                >
+                                    {isLoading ? 'Generating...' : 'Generate Challenge'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -389,6 +408,19 @@ export function ChallengeGenerator() {
                     {renderChallengeNavigation()}
                     {renderChallengeComponent()}
                 </div>
+                
+                {/* Reset button - only show when challenges are generated */}
+                {currentChallenges.length > 0 && (
+                    <div className="reset-button-container">
+                        <button
+                            className="reset-challenge-btn"
+                            onClick={resetChallengeHandler}
+                            disabled={isLoading || quotaLoading}
+                        >
+                            Reset Challenge
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

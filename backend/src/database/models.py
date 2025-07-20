@@ -113,6 +113,36 @@ class ScenarioAnswer(Base):
     # Relationship back to scenario
     scenario = relationship("ScenarioChallenge", back_populates="answers")
 
+class InterviewAnswer(Base):
+    """
+    Tracks individual user responses to interview (MCQ) challenges.
+    Stores what users actually answered vs the correct answers.
+    
+    FRONTEND USAGE:
+    - Submit answers via POST /interview-answers endpoint
+    - Track user's selected option (0-3 for A/B/C/D)
+    - Calculate correctness and performance metrics
+    """
+    __tablename__ = "interview_answers"
+    
+    # System fields
+    id = Column(Integer, primary_key=True)
+    date_completed = Column(DateTime, default=datetime.now)
+    
+    # User tracking
+    user_id = Column(String, nullable=False)  # USER AUTH: User identifier
+    
+    # Challenge reference
+    challenge_id = Column(Integer, ForeignKey("interview_challenges.id"), nullable=False)  # References InterviewChallenge.id
+    
+    # User response data
+    user_answer_id = Column(Integer, nullable=False)  # USER RESPONSE: Selected option (0-3 for A/B/C/D)
+    is_correct = Column(Boolean, nullable=False)  # SYSTEM CALCULATED: Whether user got it right
+    time_taken_seconds = Column(Integer, nullable=True)  # SYSTEM TRACKED: How long user took (optional)
+    
+    # Relationship back to challenge
+    challenge = relationship("InterviewChallenge")
+
 # ========================================================================================
 # QUOTA MANAGEMENT MODELS
 # ========================================================================================

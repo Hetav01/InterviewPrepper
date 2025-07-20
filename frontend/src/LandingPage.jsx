@@ -26,47 +26,60 @@ export default function LandingPage() {
     }
   }, [isSignedIn, navigate]);
 
-  // Vanta NET effect
+  // Vanta NET effect - optimized to not block animations
   useEffect(() => {
     if (!vantaEffect.current) {
-      vantaEffect.current = NET({
-        el: vantaRef.current,
-        THREE,
-        color: 0x3b82f6,
-        backgroundColor: 0x111827,
-        highlightColor: 0x1e40af,
-        points: 10.0,
-        maxDistance: 25.0,
-        spacing: 20.0,
-        showDots: true,
-        mouseControls: true,
-        touchControls: true,
-        minHeight: 200.00,
-        minWidth: 200.00,
-      });
+      // Delay Vanta initialization to prioritize button animations
+      const vantaTimer = setTimeout(() => {
+        vantaEffect.current = NET({
+          el: vantaRef.current,
+          THREE,
+          color: 0x3b82f6,
+          backgroundColor: 0x111827,
+          highlightColor: 0x1e40af,
+          points: 10.0,
+          maxDistance: 25.0,
+          spacing: 20.0,
+          showDots: true,
+          mouseControls: true,
+          touchControls: true,
+          minHeight: 200.00,
+          minWidth: 200.00,
+        });
+      }, 100); // Small delay to prioritize UI animations
+
+      return () => {
+        clearTimeout(vantaTimer);
+        if (vantaEffect.current) {
+          vantaEffect.current.destroy();
+          vantaEffect.current = null;
+        }
+      };
     }
-    return () => {
-      if (vantaEffect.current) {
-        vantaEffect.current.destroy();
-        vantaEffect.current = null;
-      }
-    };
   }, []);
 
+  // Optimized animation sequence
   useEffect(() => {
     if (displayedText.length < fullText.length) {
       const timeout = setTimeout(() => {
         setDisplayedText(fullText.slice(0, displayedText.length + 1));
-      }, 80);
+      }, 60); // Reduced from 80ms for faster text animation
       return () => clearTimeout(timeout);
     } else {
-      setTimeout(() => setShowDescription(true), 300);
-      setTimeout(() => setShowButtons(true), 900);
+      // Faster, more reliable animation sequence
+      const descriptionTimer = setTimeout(() => setShowDescription(true), 200); // Reduced from 300ms
+      const buttonTimer = setTimeout(() => setShowButtons(true), 500); // Reduced from 900ms
+      
+      return () => {
+        clearTimeout(descriptionTimer);
+        clearTimeout(buttonTimer);
+      };
     }
   }, [displayedText, fullText]);
 
+  // Faster initial load
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 300);
+    const timer = setTimeout(() => setIsLoaded(true), 100); // Reduced from 300ms
     return () => clearTimeout(timer);
   }, []);
 
@@ -88,17 +101,27 @@ export default function LandingPage() {
           <div className="landing-logo-container">
             <LogoBot className="landing-logo-gradient" gradientId="logo-gradient-landing" size={135} />
           </div>
-          <h1 className="landing-title landing-gradient-title">{displayedText}</h1>
+          <h1 className="landing-title landing-gradient-title" style={{
+            background: 'linear-gradient(90deg, #f97316 0%, #ea580c 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            color: 'transparent',
+            fontSize: '4.2rem',
+            marginBottom: '0.7rem',
+          }}>{displayedText}</h1>
           
           {/* Description */}
           {showDescription && (
             <div className="landing-description fade-in-up">
-              <p>Master ML interviews with AI-powered practice challenges</p>
+              <p style={{ color: '#fff', fontWeight: 600 }}>
+                Master ML interviews with AI-powered practice challenges.
+              </p>
             </div>
           )}
           
-          {/* Add some spacing before buttons */}
-          <div style={{ height: '40px' }}></div>
+          {/* Reduced spacing before buttons */}
+          <div style={{ height: '30px' }}></div>
           
           <SignedOut>
             {showButtons && (

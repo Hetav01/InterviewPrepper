@@ -13,10 +13,10 @@ export default function LogoBot({ className = '', style = {}, gradientId = 'logo
     >
       <defs>
         <linearGradient id={gradientId} x1="60" y1="80" x2="180" y2="200" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#2563eb" />
-          <stop offset="0.4" stopColor="#60a5fa" />
-          <stop offset="0.7" stopColor="#ff9800" />
-          <stop offset="1" stopColor="#ffb347" />
+          <stop stopColor="#3b82f6" />
+          <stop offset="0.4" stopColor="#6366f1" />
+          <stop offset="0.7" stopColor="#f97316" />
+          <stop offset="1" stopColor="#fbbf24" />
         </linearGradient>
       </defs>
       <path d="M60 140 Q60 80 120 80 Q180 80 180 140" stroke={`url(#${gradientId})`} strokeWidth="12" fill="none" strokeLinecap="round" />

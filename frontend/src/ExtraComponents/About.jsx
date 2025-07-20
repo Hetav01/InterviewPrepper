@@ -5,8 +5,6 @@ import NET from 'vanta/dist/vanta.net.min';
 import * as THREE from 'three';
 
 export default function About() {
-  const vantaRef = useRef(null);
-  const vantaEffect = useRef(null);
   const navigate = useNavigate();
 
   // Ensure dark mode is applied consistently
@@ -16,6 +14,9 @@ export default function About() {
       // Don't remove dark mode class on cleanup to maintain consistency
     };
   }, []);
+
+  const vantaRef = useRef(null);
+  const vantaEffect = useRef(null);
 
   // Vanta NET effect for background
   useEffect(() => {

@@ -345,6 +345,117 @@ def update_scenario_evaluation(
         raise RuntimeError(f"Database error while updating scenario evaluation: {str(e)}")
 
 # ========================================================================================
+# INTERVIEW ANSWER FUNCTIONS
+# ========================================================================================
+
+def save_interview_answer(
+    db: Session, 
+    user_id: str, 
+    challenge_id: int, 
+    user_answer_id: int, 
+    time_taken_seconds: int = None
+):
+    """
+    Save a user's answer to an interview (MCQ) challenge.
+    
+    Args:
+        db: Database session
+        user_id: User identifier from authentication
+        challenge_id: ID of the interview challenge being answered
+        user_answer_id: User's selected option (0-3 for A/B/C/D)
+        time_taken_seconds: Optional time taken to answer
+    
+    Returns:
+        Created InterviewAnswer object
+    
+    Raises:
+        ValueError: Invalid input parameters
+        RuntimeError: Database operation failed
+    """
+    # INPUT VALIDATION
+    if not user_id or not user_id.strip():
+        raise ValueError("user_id cannot be empty")
+    
+    if not 0 <= user_answer_id <= 3:
+        raise ValueError(f"Invalid user_answer_id '{user_answer_id}'. Must be 0, 1, 2, or 3 (for A/B/C/D options)")
+    
+    try:
+        # Get the challenge to check correct answer
+        challenge = db.query(models.InterviewChallenge).filter(
+            models.InterviewChallenge.id == challenge_id
+        ).first()
+        if not challenge:
+            raise ValueError(f"InterviewChallenge with id {challenge_id} not found")
+        
+        # Calculate if answer is correct
+        is_correct = (user_answer_id == challenge.correct_answer_id)
+        
+        answer = models.InterviewAnswer(
+            user_id=user_id,
+            challenge_id=challenge_id,
+            user_answer_id=user_answer_id,
+            is_correct=is_correct,
+            time_taken_seconds=time_taken_seconds
+        )
+        db.add(answer)
+        db.commit()
+        db.refresh(answer)
+        logger.info(f"Saved interview answer for user {user_id}, challenge {challenge_id}, correct: {is_correct}")
+        return answer
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(f"Failed to save interview answer for user {user_id}: {str(e)}")
+        raise RuntimeError(f"Database error while saving interview answer: {str(e)}")
+
+def get_user_interview_answers(db: Session, user_id: str):
+    """
+    Get all interview answers for a user.
+    
+    Args:
+        db: Database session
+        user_id: User identifier from authentication
+    
+    Returns:
+        List of InterviewAnswer objects with challenge data
+    """
+    if not user_id or not user_id.strip():
+        raise ValueError("user_id cannot be empty")
+    
+    try:
+        answers = db.query(models.InterviewAnswer).filter(
+            models.InterviewAnswer.user_id == user_id
+        ).all()
+        logger.info(f"Retrieved {len(answers)} interview answers for user {user_id}")
+        return answers
+    except SQLAlchemyError as e:
+        logger.error(f"Failed to get interview answers for user {user_id}: {str(e)}")
+        raise RuntimeError(f"Database error while getting interview answers: {str(e)}")
+
+def get_user_scenario_answers(db: Session, user_id: str):
+    """
+    Get all scenario answers for a user.
+    
+    Args:
+        db: Database session
+        user_id: User identifier from authentication
+    
+    Returns:
+        List of ScenarioAnswer objects
+    """
+    if not user_id or not user_id.strip():
+        raise ValueError("user_id cannot be empty")
+    
+    try:
+        answers = db.query(models.ScenarioAnswer).filter(
+            models.ScenarioAnswer.user_id == user_id
+        ).all()
+        logger.info(f"Retrieved {len(answers)} scenario answers for user {user_id}")
+        return answers
+    except SQLAlchemyError as e:
+        logger.error(f"Failed to get scenario answers for user {user_id}: {str(e)}")
+        raise RuntimeError(f"Database error while getting scenario answers: {str(e)}")
+
+# ========================================================================================
 # CHALLENGE RETRIEVAL FUNCTIONS
 # ========================================================================================
 
@@ -386,3 +497,4 @@ def get_user_challenges(db: Session, user_id: str, challenge_type: str):
     except SQLAlchemyError as e:
         logger.error(f"Failed to get user challenges for user {user_id}: {str(e)}")
         raise RuntimeError(f"Database error while getting user challenges: {str(e)}")
+

@@ -1,81 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useApi } from "../utils/Api";
-
-// Animated number component with smooth transitions
-const AnimatedNumber = ({ value, duration = 1500, delay = 0 }) => {
-    const [displayValue, setDisplayValue] = useState(0);
-
-    useEffect(() => {
-        if (value === 0) {
-            setDisplayValue(0);
-            return;
-        }
-
-        let animationId;
-        let timeoutId;
-        
-        const startAnimation = () => {
-            let startTime = null;
-            const startValue = 0;
-            const endValue = value;
-
-            const animate = (currentTime) => {
-                if (startTime === null) startTime = currentTime;
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                // Ultra-smooth easing function (ease-out-quart)
-                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-                
-                // Calculate current value with precise interpolation
-                const currentValue = startValue + (endValue - startValue) * easeOutQuart;
-                
-                // Use different rounding strategies based on value and progress
-                let smoothValue;
-                if (endValue <= 10) {
-                    // For small numbers, use continuous rounding for ultra-smooth effect
-                    smoothValue = Math.round(currentValue);
-                } else if (progress < 0.1) {
-                    // Start very slowly for larger numbers
-                    smoothValue = Math.floor(currentValue);
-                } else {
-                    // Smooth progression for larger numbers
-                    smoothValue = Math.round(currentValue);
-                }
-                
-                setDisplayValue(smoothValue);
-
-                if (progress < 1) {
-                    animationId = requestAnimationFrame(animate);
-                } else {
-                    // Ensure we end exactly at the target value
-                    setDisplayValue(endValue);
-                }
-            };
-
-            animationId = requestAnimationFrame(animate);
-        };
-
-        // Add delay for staggered effect
-        if (delay > 0) {
-            timeoutId = setTimeout(startAnimation, delay);
-        } else {
-            startAnimation();
-        }
-
-        // Cleanup function
-        return () => {
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-        };
-    }, [value, duration, delay]);
-
-    return <span>{displayValue}</span>;
-};
+import AnimatedNumber from "./AnimatedNumber";
+import HistoryStatsCard from "./HistoryStatsCard";
+import HistoryFiltersSort from "./HistoryFiltersSort";
+import HistorySearchBar from "./HistorySearchBar";
+import HistoryTopicBreakdown from "./HistoryTopicBreakdown";
+import { HistoryScoreTracker } from "./HistoryScoreTracker";
 
 export function HistoryPanel() {
   const [history, setHistory] = useState([]);
@@ -87,6 +17,8 @@ export function HistoryPanel() {
     const [selectedChallenge, setSelectedChallenge] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [expandedDates, setExpandedDates] = useState(new Set(["Today"])); // Keep today expanded by default
+    const [searchQuery, setSearchQuery] = useState("");
+
 
     const { getChallengeHistory, getUserStats } = useApi();
 
@@ -104,6 +36,12 @@ export function HistoryPanel() {
                 getChallengeHistory(),
                 getUserStats()
             ]);
+
+            console.log('History data loaded:', historyData);
+            console.log('Challenges with user answers:', historyData.challenges?.filter(c => 
+                (c.type === 'interview' && c.user_answer) || 
+                (c.type === 'scenario' && c.user_answers && c.user_answers.length > 0)
+            ));
 
             setHistory(historyData.challenges || []);
             setStats(statsData);
@@ -123,6 +61,16 @@ export function HistoryPanel() {
             filtered = history.filter(challenge => challenge.type === "interview");
         } else if (filter === "scenario") {
             filtered = history.filter(challenge => challenge.type === "scenario");
+        }
+
+        // Apply search filter
+        if (searchQuery.trim()) {
+            const q = searchQuery.trim().toLowerCase();
+            filtered = filtered.filter(challenge =>
+                (challenge.title && challenge.title.toLowerCase().includes(q)) ||
+                (challenge.topic && challenge.topic.toLowerCase().includes(q)) ||
+                (challenge.explanation && challenge.explanation.toLowerCase().includes(q))
+            );
         }
 
         // Apply sorting
@@ -213,165 +161,37 @@ export function HistoryPanel() {
         });
     };
 
-    const renderStatsCard = () => {
-        if (!stats) return null;
-
-        const todaysChallenges = getTodaysChallenges();
-        const todaysCount = todaysChallenges.length;
-
-        return (
-            <div className="stats-dashboard">
-                <div className="stats-header">
-                    <h3>Your Progress Dashboard</h3>
-                    <p>Track your machine learning interview preparation journey</p>
-                </div>
-                
-                <div className="stats-grid">
-                    <div className="stat-card total">
-                        <div className="stat-icon">🎯</div>
-                        <div className="stat-content">
-                            <div className="stat-number">
-                                <AnimatedNumber value={stats.totalChallenges} duration={1800} delay={200} />
-                            </div>
-                            <div className="stat-label">Total Challenges</div>
-                            <div className="stat-sublabel">Keep it up!</div>
-                        </div>
-                    </div>
-                    
-                    <div className="stat-card interview">
-                        <div className="stat-icon">💼</div>
-                        <div className="stat-content">
-                            <div className="stat-number">
-                                <AnimatedNumber value={stats.interviewChallenges} duration={1600} delay={400} />
-                            </div>
-                            <div className="stat-label">Interview MCQs</div>
-                            <div className="stat-sublabel">Quick knowledge tests</div>
-                        </div>
-                    </div>
-                    
-                    <div className="stat-card scenario">
-                        <div className="stat-icon">🧠</div>
-                        <div className="stat-content">
-                            <div className="stat-number">
-                                <AnimatedNumber value={stats.scenarioChallenges} duration={1600} delay={600} />
-                            </div>
-                            <div className="stat-label">Scenario Challenges</div>
-                            <div className="stat-sublabel">Deep thinking practice</div>
-                        </div>
-                    </div>
-                    
-                    <div className="stat-card topics">
-                        <div className="stat-icon">📚</div>
-                        <div className="stat-content">
-                            <div className="stat-number">
-                                <AnimatedNumber value={Object.keys(stats.topicBreakdown).length} duration={1400} delay={800} />
-                            </div>
-                            <div className="stat-label">Topics Mastered</div>
-                            <div className="stat-sublabel">Expand your knowledge</div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="progress-section">
-                    <div className="progress-header">
-                        <span>Daily Goal Progress</span>
-                        <span>
-                            <AnimatedNumber value={todaysCount} duration={1600} delay={1000} />/10
-                        </span>
-                    </div>
-                    <div className="progress-bar">
-                        <div 
-                            className="progress-fill animated" 
-                            style={{ 
-                                '--target-width': `${Math.min((todaysCount / 10) * 100, 100)}%`
-                            }}
-                        ></div>
-                    </div>
-                    <p className="progress-message">
-                        {todaysCount >= 10 
-                            ? `Amazing! You've completed ${todaysCount} challenges today and exceeded your daily goal!` 
-                            : `${10 - todaysCount} more challenges to reach your daily goal!`
-                        }
-                    </p>
-                </div>
-            </div>
-        );
-    };
-
-    const renderTopicBreakdown = () => {
-        if (!stats || !stats.topicBreakdown) return null;
-
-        const topTopics = Object.entries(stats.topicBreakdown)
-            .sort(([,a], [,b]) => b - a)
-            .slice(0, 8);
-
-        return (
-            <div className="topic-insights">
-                <h4>Your Focus Areas</h4>
-                <div className="topic-list">
-                    {topTopics.map(([topic, count]) => (
-                        <div key={topic} className="topic-item">
-                            <div className="topic-info">
-                                <span className="topic-name">{topic}</span>
-                                <span className="topic-description">
-                                    {count === 1 ? '1 challenge' : `${count} challenges`}
-                                </span>
-                            </div>
-                            <div className="topic-badge">{count}</div>
-                        </div>
-                    ))}
-                </div>
-                
-                {Object.keys(stats.topicBreakdown).length > 8 && (
-                    <div className="topic-more">
-                        +{Object.keys(stats.topicBreakdown).length - 8} more topics explored
-                    </div>
-                )}
-            </div>
-        );
-    };
-
-    const renderFiltersAndSort = () => {
-        return (
-            <div className="controls-section">
-                <div className="controls-header">
-                    <h4>Filter & Sort Your Challenges</h4>
-                </div>
-                <div className="controls-grid">
-                    <div className="control-group">
-                        <label htmlFor="filter-select">Show:</label>
-                        <select
-                            id="filter-select"
-                            value={filter}
-                            onChange={(e) => setFilter(e.target.value)}
-                            className="modern-select"
-                        >
-                            <option value="all">All Challenges</option>
-                            <option value="interview">Interview MCQs Only</option>
-                            <option value="scenario">Scenario Challenges Only</option>
-                        </select>
-                    </div>
-                    <div className="control-group">
-                        <label htmlFor="sort-select">Sort by:</label>
-                        <select
-                            id="sort-select"
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value)}
-                            className="modern-select"
-                        >
-                            <option value="date">Date (Newest First)</option>
-                            <option value="difficulty">Difficulty Level</option>
-                            <option value="topic">Topic Name</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        );
-    };
+    const todaysCount = getTodaysChallenges().length;
 
     const renderChallengeCard = (challenge) => {
         const isInterview = challenge.type === "interview";
+        
+        // Debug logging
+        if (isInterview && challenge.user_answer) {
+            console.log('Interview challenge with answer:', challenge.id, challenge.user_answer);
+        }
+        if (!isInterview && challenge.user_answers) {
+            console.log('Scenario challenge with answers:', challenge.id, challenge.user_answers);
+        }
+        
+        // Get answer status for the card
+        let answerStatus = null;
+        if (isInterview && challenge.user_answer) {
+            answerStatus = {
+                answered: true,
+                correct: challenge.user_answer.is_correct,
+                userAnswerId: challenge.user_answer.user_answer_id
+            };
+        } else if (!isInterview && challenge.user_answers && challenge.user_answers.length > 0) {
+            // For scenarios, calculate average score
+            const totalScore = challenge.user_answers.reduce((sum, answer) => sum + (answer.llm_score || 0), 0);
+            const avgScore = totalScore / challenge.user_answers.length;
+            answerStatus = {
+                answered: true,
+                correct: avgScore >= 70,
+                averageScore: Math.round(avgScore)
+            };
+        }
         
         return (
             <div
@@ -382,6 +202,17 @@ export function HistoryPanel() {
                 <div className="challenge-type-badge">
                     {isInterview ? 'Interview' : 'Scenario'}
                 </div>
+                
+                {/* Answer status indicator */}
+                {answerStatus && (
+                    <div className={`answer-status-badge ${answerStatus.correct ? 'correct' : 'incorrect'}`}>
+                        {isInterview ? (
+                            answerStatus.correct ? '✓ Correct' : '✗ Incorrect'
+                        ) : (
+                            `${answerStatus.averageScore}% Avg`
+                        )}
+                    </div>
+                )}
                 
                 <div className="challenge-main-content">
                     <h5 className="challenge-title">{challenge.title}</h5>
@@ -405,9 +236,33 @@ export function HistoryPanel() {
                     
                     <div className="challenge-preview">
                         {isInterview ? (
-                            <span>Multiple choice • {JSON.parse(challenge.options || '[]').length} options</span>
+                            <div className="challenge-preview-content">
+                                <span>Multiple choice • {JSON.parse(challenge.options || '[]').length} options</span>
+                                {answerStatus ? (
+                                    answerStatus.correct ? (
+                                        <span className="user-answer-preview">
+                                            Correct answer: {String.fromCharCode(65 + challenge.correct_answer_id)}
+                                        </span>
+                                    ) : (
+                                        <span className="user-answer-preview">
+                                            Correct answer: {String.fromCharCode(65 + challenge.correct_answer_id)} • Your answer: {String.fromCharCode(65 + answerStatus.userAnswerId)}
+                                        </span>
+                                    )
+                                ) : (
+                                    <span className="user-answer-preview">
+                                        Did not answer • Correct answer: {String.fromCharCode(65 + challenge.correct_answer_id)}
+                                    </span>
+                                )}
+                            </div>
                         ) : (
-                            <span>Open-ended scenario • {JSON.parse(challenge.questions || '[]').length} questions</span>
+                            <div className="challenge-preview-content">
+                                <span>Open-ended scenario • {JSON.parse(challenge.questions || '[]').length} questions</span>
+                                {answerStatus && (
+                                    <span className="user-answer-preview">
+                                        {challenge.user_answers.length} answer(s) submitted
+                                    </span>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>
@@ -426,7 +281,7 @@ export function HistoryPanel() {
             <div className="modal-overlay" onClick={closeModal}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                     <div className="modal-header">
-                                            <div className="modal-type-badge">
+                        <div className="modal-type-badge">
                         {isInterview ? 'Interview Challenge' : 'Scenario Challenge'}
                     </div>
                         <button className="modal-close" onClick={closeModal}>×</button>
@@ -455,20 +310,61 @@ export function HistoryPanel() {
                                 <div className="options-section">
                                     <h4>Answer Options</h4>
                                     <div className="options-list">
-                                        {JSON.parse(selectedChallenge.options || '[]').map((option, index) => (
-                                            <div 
-                                                key={index} 
-                                                className={`option-item ${index === selectedChallenge.correct_answer_id ? 'correct' : ''}`}
-                                            >
-                                                <span className="option-letter">{String.fromCharCode(65 + index)}</span>
-                                                <span className="option-text">{option}</span>
-                                                {index === selectedChallenge.correct_answer_id && (
-                                                    <span className="correct-indicator">✓ Correct</span>
-                                                )}
-                                            </div>
-                                        ))}
+                                        {JSON.parse(selectedChallenge.options || '[]').map((option, index) => {
+                                            const isCorrect = index === selectedChallenge.correct_answer_id;
+                                            const isUserChoice = selectedChallenge.user_answer && index === selectedChallenge.user_answer.user_answer_id;
+                                            const hasUserAnswer = selectedChallenge.user_answer !== null;
+                                            
+                                            let optionClass = 'option-item';
+                                            if (hasUserAnswer) {
+                                                if (isCorrect) optionClass += ' correct-answer';
+                                                if (isUserChoice && !isCorrect) optionClass += ' user-incorrect';
+                                                if (isUserChoice && isCorrect) optionClass += ' user-correct';
+                                            } else if (isCorrect) {
+                                                optionClass += ' correct';
+                                            }
+                                            
+                                            return (
+                                                <div key={index} className={optionClass}>
+                                                    <span className="option-letter">{String.fromCharCode(65 + index)}</span>
+                                                    <span className="option-text">{option}</span>
+                                                    {isCorrect && (
+                                                        <span className="correct-indicator">✓ Correct Answer</span>
+                                                    )}
+                                                    {isUserChoice && hasUserAnswer && (
+                                                        <span className={`user-choice-indicator ${isCorrect ? 'correct' : 'incorrect'}`}>
+                                                            {isCorrect ? '✓ Your answer (Correct!)' : '✗ Your answer'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
+                                
+                                {/* Show result summary for answered questions */}
+                                {selectedChallenge.user_answer && (
+                                    <div className="answer-result-section">
+                                        <h4>Your Result</h4>
+                                        <div className={`result-summary ${selectedChallenge.user_answer.is_correct ? 'correct' : 'incorrect'}`}>
+                                            <div className="result-icon">
+                                                {selectedChallenge.user_answer.is_correct ? '🎉' : '📚'}
+                                            </div>
+                                            <div className="result-text">
+                                                {selectedChallenge.user_answer.is_correct ? (
+                                                    <span>Congratulations! You answered correctly.</span>
+                                                ) : (
+                                                    <span>Not quite right. Review the explanation below to learn more.</span>
+                                                )}
+                                            </div>
+                                            {selectedChallenge.user_answer.time_taken_seconds && (
+                                                <div className="result-time">
+                                                    Time taken: {selectedChallenge.user_answer.time_taken_seconds}s
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                                 
                                 <div className="explanation-section">
                                     <h4>Explanation</h4>
@@ -484,33 +380,82 @@ export function HistoryPanel() {
                                 
                                 {selectedChallenge.questions && (
                                     <div className="scenario-questions">
-                                        <h4>Questions</h4>
+                                        <h4>Questions & Your Answers</h4>
                                         <div className="questions-list">
-                                            {JSON.parse(selectedChallenge.questions || '[]').map((question, index) => (
-                                                <div key={index} className="question-item">
-                                                    <span className="question-number">{index + 1}.</span>
-                                                    <span className="question-text">
-                                                        {typeof question === 'string' ? question : question.prompt || question}
-                                                    </span>
-                                                </div>
-                                            ))}
+                                            {JSON.parse(selectedChallenge.questions || '[]').map((question, index) => {
+                                                const userAnswer = selectedChallenge.user_answers?.find(a => a.question_index === index);
+                                                
+                                                return (
+                                                    <div key={index} className="question-item-container">
+                                                        <div className="question-header">
+                                                            <span className="question-number">{index + 1}.</span>
+                                                            <div className="question-content">
+                                                                <div className="question-text">
+                                                                    {typeof question === 'string' ? question : question.prompt || question}
+                                                                </div>
+                                                                
+                                                                {/* Individual Question Explanation */}
+                                                                {question.explanation && (
+                                                                    <div className="question-explanation">
+                                                                        <h6>📋 What to cover in your answer:</h6>
+                                                                        <p>{question.explanation}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {userAnswer ? (
+                                                            <div className="user-answer-section">
+                                                                <div className="user-answer-header">
+                                                                    <h5>Your Answer</h5>
+                                                                    <div className={`score-badge ${userAnswer.llm_score >= 70 ? 'good' : userAnswer.llm_score >= 50 ? 'fair' : 'needs-work'}`}>
+                                                                        {userAnswer.llm_score}/100
+                                                                    </div>
+                                                                </div>
+                                                                <div className="user-answer-text">
+                                                                    {userAnswer.user_answer}
+                                                                </div>
+                                                                
+                                                                {userAnswer.llm_feedback && (
+                                                                    <div className="feedback-section">
+                                                                        <h6>🤖 AI Feedback</h6>
+                                                                        <p>{userAnswer.llm_feedback}</p>
+                                                                    </div>
+                                                                )}
+                                                                
+                                                                {userAnswer.llm_correct_answer && (
+                                                                    <div className="ideal-answer-section">
+                                                                        <h6>💡 Ideal Answer</h6>
+                                                                        <p>{userAnswer.llm_correct_answer}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="no-answer-section">
+                                                                <p className="no-answer-text">Not answered yet</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
                                 
+                                {/* Overall Scenario Guidance (separate from individual questions) */}
                                 {selectedChallenge.correct_answer && (
-                                    <div className="correct-answer-section">
-                                        <h4>Ideal Answer</h4>
-                                        <div className="answer-content">
+                                    <div className="scenario-overall-guidance">
+                                        <h4>📚 Overall Scenario Guidance</h4>
+                                        <div className="guidance-content">
                                             <p>{selectedChallenge.correct_answer}</p>
                                         </div>
                                     </div>
                                 )}
                                 
                                 {selectedChallenge.explanation && (
-                                    <div className="explanation-section">
-                                        <h4>Explanation & Guidance</h4>
-                                        <div className="explanation-content">
+                                    <div className="scenario-evaluation-criteria">
+                                        <h4>⚖️ Evaluation Criteria</h4>
+                                        <div className="criteria-content">
                                             <p>{selectedChallenge.explanation}</p>
                                         </div>
                                     </div>
@@ -558,13 +503,24 @@ export function HistoryPanel() {
             <div className="history-header">
                 <h1>Challenge History</h1>
                 <p>Track your progress and review past challenges</p>
+                <button 
+                    className="refresh-history-btn"
+                    onClick={loadHistoryData}
+                    disabled={loading}
+                >
+                    {loading ? '🔄 Refreshing...' : '🔄 Refresh Data'}
+                </button>
             </div>
-            
-            {renderStatsCard()}
-            
+
+            <HistoryStatsCard stats={stats} todaysCount={todaysCount} />
+
+            <HistoryScoreTracker history={history} />
+
             <div className="history-layout">
                 <div className="history-main">
-                    {renderFiltersAndSort()}
+                    <HistoryFiltersSort filter={filter} setFilter={setFilter} sortBy={sortBy} setSortBy={setSortBy}>
+                        <HistorySearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                    </HistoryFiltersSort>
                     
                     {filteredHistory.length === 0 ? (
                         <div className="empty-state">
@@ -612,7 +568,7 @@ export function HistoryPanel() {
                 </div>
                 
                 <div className="history-sidebar">
-                    {renderTopicBreakdown()}
+                    <HistoryTopicBreakdown stats={stats} setSearchQuery={setSearchQuery} />
                 </div>
             </div>
             

@@ -59,7 +59,7 @@ def get_mcq_prompt(topic: str, difficulty: str, num_questions: int) -> str:
     - correct_answer_id (0-3)
     - explaination (string, typo intentional)
     """
-    return f"""Act as a Senior Data Scientist with significant managerial experience in hiring and mentoring machine learning candidates. Your task is to generate {num_questions} multiple choice interview questions on the topic of {topic}, targeting the {difficulty} level as defined below.
+    return f"""Act as a Senior Data & AI Leader with extensive experience in hiring and mentoring candidates across Data Science, Machine Learning, Deep Learning, Data Engineering, Data Analytics, Artificial Intelligence, Neural Networks, Generative AI, NLP, Computer Vision, MLOps, and related fields. Your task is to generate {num_questions} multiple choice interview questions on the topic of {topic}, targeting the {difficulty} level as defined below.
 
 CRITICAL REQUIREMENTS:
 - Return a JSON array with EXACTLY {num_questions} questions.
@@ -71,10 +71,25 @@ CRITICAL REQUIREMENTS:
 DIFFICULTY GUIDELINES:
 - {difficulty} difficulty means: {{"Basic concepts and definitions" if difficulty == "Easy" else "Intermediate application and analysis" if difficulty == "Medium" else "Advanced problem-solving and complex scenarios"}}
 
+TOPIC COVERAGE:
+Focus on real-world applications across these data-related domains:
+- Data Science & Analytics: statistics, hypothesis testing, experimental design, business metrics
+- Machine Learning: supervised/unsupervised learning, model selection, feature engineering, evaluation metrics
+- Deep Learning: neural architectures, training strategies, optimization, regularization
+- Data Engineering: ETL/ELT pipelines, data warehousing, streaming, cloud platforms, data quality
+- Artificial Intelligence: search algorithms, knowledge representation, reasoning systems
+- Natural Language Processing: text preprocessing, embeddings, transformers, language models
+- Computer Vision: image processing, CNNs, object detection, segmentation
+- Generative AI: GANs, VAEs, diffusion models, large language models, prompt engineering
+- MLOps: model deployment, monitoring, versioning, CI/CD, infrastructure
+- Big Data: distributed computing, Spark, Hadoop, NoSQL databases
+- Cloud Platforms: AWS, GCP, Azure data services and ML platforms
+
 QUALITY REQUIREMENTS:
-- Questions should be realistic interview questions used in the ML/Data Science field.
-- All 4 options must be plausible and competitive, but only one correct.
-- Avoid any obvious or trivial wrong answers.
+- Questions should reflect real interview scenarios used in top tech companies, startups, and data-driven organizations.
+- All 4 options must be plausible and competitive, avoiding obvious wrong answers.
+- Include practical considerations like scalability, cost, performance, and business impact.
+- Cover both theoretical understanding and hands-on implementation knowledge.
 - Explanations must be thorough and educational, clarifying both why the correct answer is correct and why the others are not.
 - Strictly follow the JSON array structure below. Do NOT add extra text, formatting, markdown, or commentary.
 
@@ -101,44 +116,70 @@ def get_scenario_prompt(topic: str, difficulty: str, num_questions: int) -> str:
     SCENARIO PROMPT:
     Output a JSON object with:
     - title (string)
-    - questions (list of objects with "prompt" field)
+    - questions (list of objects with "prompt" and "explanation" fields)
     - correct_answer (string)
     - explanation (string)
     """
-    return f"""Act as a Senior Data Scientist and hiring manager experienced in technical interviews for data science and ML roles. Create a **realistic interview scenario** related to {topic} at {difficulty} difficulty level, following the guidelines below.
+    return f"""Act as a Senior Data & AI Leader and hiring manager with extensive experience in technical interviews across Data Science, Machine Learning, Deep Learning, Data Engineering, Data Analytics, Artificial Intelligence, Neural Networks, Generative AI, NLP, Computer Vision, MLOps, and emerging AI technologies. Create a **realistic interview scenario** related to {topic} at {difficulty} difficulty level, following the guidelines below.
 
 CRITICAL REQUIREMENTS:
 - Output a single JSON object with EXACTLY these 4 fields: title, questions, correct_answer, explanation
 - "title": Set a realistic context (include company, role, and key scenario constraints)
-- "questions": Array of {num_questions} objects, each with a "prompt" field. These should be logically connected, with each question building on the scenario.
-- "correct_answer": A model answer or bullet points that demonstrate ideal approaches, frameworks, or considerations
-- "explanation": Scoring rubric or specific criteria (technical accuracy, depth, communication, etc.)
+- "questions": Array of {num_questions} objects, each with "prompt" and "explanation" fields. These should be logically connected, with each question building on the scenario.
+- "correct_answer": A model answer or bullet points that demonstrate ideal approaches, frameworks, or considerations for the overall scenario
+- "explanation": General scoring rubric or specific criteria (technical accuracy, depth, communication, etc.) for the entire scenario
 - All fields are required and must be filled; do not leave any blank.
 
 DIFFICULTY GUIDELINES:
-- {difficulty} means: {{"Entry-level scenarios with basic problem-solving" if difficulty == "Easy" else "Mid-level complexity requiring analysis and trade-offs" if difficulty == "Medium" else "Senior-level challenges with complex constraints and decisions"}}
+- {difficulty}
+
+DOMAIN EXPERTISE AREAS:
+Cover realistic scenarios from these high-demand fields:
+- Data Science & Analytics: A/B testing, customer analytics, predictive modeling, business intelligence
+- Machine Learning Engineering: model productionization, feature stores, model monitoring, AutoML
+- Deep Learning: neural architecture design, training large models, transfer learning, model optimization
+- Data Engineering: real-time data pipelines, data lakes, streaming analytics, data governance
+- Artificial Intelligence: AI system design, multi-modal AI, AI safety, responsible AI
+- Natural Language Processing: chatbot development, document analysis, search systems, LLM applications
+- Computer Vision: image recognition systems, video analytics, medical imaging, autonomous systems
+- Generative AI: content generation, AI assistants, prompt optimization, fine-tuning strategies
+- MLOps & Platform: model deployment, containerization, orchestration, monitoring, scaling
+- Big Data Analytics: distributed processing, real-time analytics, data lake architecture
+- Cloud AI/ML: platform selection, cost optimization, serverless ML, edge deployment
 
 SCENARIO & QUESTION GUIDELINES:
-- Set a professional, realistic context relevant to ML/Data Science (e.g., “You are a Machine Learning Engineer at a fintech company…”)
-- For harder scenarios, occasionally use a short high-level system design question (not always, but for some hard questions).
-- Each question in "questions" should build on the scenario logically, challenging the candidate's analysis, decision-making, and practical skills.
-- Include practical trade-offs and interview-appropriate complexity.
-- Make the scenario and questions engaging and relevant to real-world roles.
+- Set a professional, realistic context relevant to modern data/AI roles (e.g., "You are a Senior ML Engineer at a fintech startup...", "As a Data Scientist at a healthcare company...")
+- Include real-world constraints: budget, timeline, data privacy, scalability, regulatory compliance
+- For harder scenarios, incorporate system design elements, cross-functional collaboration, and strategic decision-making
+- Each question in "questions" should build on the scenario logically, challenging analytical thinking, technical depth, and practical implementation skills
+- Each question should have its own specific explanation covering key technical and business considerations
+- Include practical trade-offs between accuracy vs. latency, cost vs. performance, explainability vs. complexity
+- Address modern challenges: data drift, model bias, ethical AI, GDPR compliance, model interpretability
+- Make scenarios engaging and directly relevant to current industry practices and emerging trends
 
 EXACT JSON FORMAT REQUIRED:
 {{
   "title": "You are a [role] at [company]. [Scenario description with relevant context and constraints]",
   "questions": [
-    {{"prompt": "How would you approach this problem initially?"}},
-    {{"prompt": "What challenges might you face and how would you address them?"}},
-    {{"prompt": "How would you measure success and iterate on your solution?"}}
+    {{
+      "prompt": "How would you approach this problem initially?",
+      "explanation": "Key points: data exploration strategy, problem definition, initial hypotheses, stakeholder alignment"
+    }},
+    {{
+      "prompt": "What challenges might you face and how would you address them?",
+      "explanation": "Key points: data quality issues, scalability concerns, model interpretability, deployment challenges"
+    }},
+    {{
+      "prompt": "How would you measure success and iterate on your solution?",
+      "explanation": "Key points: success metrics definition, A/B testing strategy, monitoring setup, feedback loops"
+    }}
     // ...add more as needed to total {num_questions}
   ],
-  "correct_answer": "A strong answer should include: [key frameworks, best practices, considerations that show deep competency]",
-  "explanation": "Evaluate based on: [criteria for scoring—technical accuracy, problem-solving, practicality, and communication clarity]"
+  "correct_answer": "A strong answer should include: [key frameworks, best practices, considerations that show deep competency for the overall scenario]",
+  "explanation": "Evaluate based on: [criteria for scoring—technical accuracy, problem-solving, practicality, and communication clarity for the entire scenario]"
 }}
 
-Generate a scenario with exactly {num_questions} questions in the questions array, following this structure and all requirements above. Do NOT include any extra text or formatting."""
+Generate a scenario with exactly {num_questions} questions in the questions array, following this structure and all requirements above. Each question must have both prompt and explanation fields. Do NOT include any extra text or formatting."""
 
 def get_evaluation_prompt(user_answer: str, correct_answer: str, scenario_title: str, questions: str) -> str:
     """
@@ -148,7 +189,7 @@ def get_evaluation_prompt(user_answer: str, correct_answer: str, scenario_title:
     - feedback (string)
     - correct_answer (string)
     """
-    return f"""Act as a Senior Data Scientist and seasoned hiring manager. Evaluate the candidate's response to the scenario below, following the rubric and output specifications exactly.
+    return f"""Act as a Senior Data & AI Leader and seasoned hiring manager with expertise across Data Science, Machine Learning, Deep Learning, Data Engineering, Data Analytics, Artificial Intelligence, Neural Networks, Generative AI, NLP, Computer Vision, MLOps, and emerging technologies. Evaluate the candidate's response to the scenario below, following the rubric and output specifications exactly.
 
 SCENARIO TITLE:
 {scenario_title}
@@ -165,23 +206,32 @@ REFERENCE ANSWER (for comparison):
 CRITICAL OUTPUT REQUIREMENTS:
 - Return **only** a single JSON object, no extra text or formatting.
 - The JSON must contain exactly these three fields, using these exact names and order: score, feedback, correct_answer.
-  • "score": integer 0-100 (must reflect the weighted rubric).  
+  • "score": integer 0-100 (must reflect the weighted rubric) The score must not always be a multiple of 5, it can be any number.  
   • "feedback": concise, specific, and actionable; highlight strengths first, then areas to improve.  
   • "correct_answer": a polished, ideal model answer that fully addresses the scenario.
 
-RUBRIC & WEIGHTING (use when assigning the score):
-- Technical accuracy - 40 %  
-- Problem-solving methodology - 30 %  
-- Communication clarity - 20 %  
-- Practical considerations - 10 %
+EVALUATION CRITERIA FOR DATA & AI ROLES:
+Consider expertise across these domains when scoring:
+- Technical depth in relevant areas (ML/DL algorithms, data engineering patterns, AI architectures)
+- Practical implementation knowledge (tools, frameworks, cloud platforms, best practices)
+- System design thinking (scalability, reliability, performance, cost considerations)
+- Data governance & ethics (privacy, bias, fairness, explainability, regulatory compliance)
+- Business acumen (ROI, stakeholder management, problem framing, impact measurement)
+- Modern practices (MLOps, AutoML, LLMOps, real-time ML, edge deployment)
 
-SCORING BANDS:
-90-100  Exceptional: comprehensive, insightful, virtually flawless  
-80-89   Strong: solid coverage with some notable insights  
-70-79   Good: covers most key points, minor gaps  
-60-69   Adequate: misses several important elements  
-50-59   Weak: significant gaps or misunderstandings  
-<50     Poor: major issues, little demonstrated competency
+RUBRIC & WEIGHTING (use when assigning the score)(be thorough in your evaluation, but remember to keep a light hand and the evaluation should sound like coming from a manager in a real interview. The score should be a reflection of the overall performance of the candidate. The explanation and guidance should be thorough but the tone should be light and friendly and as if sitting in a real interview.):
+- Technical accuracy & depth - 40 %  
+- Problem-solving methodology & system thinking - 30 %  
+- Communication clarity & structure - 10 %  
+- Practical considerations & business impact - 20 %
+
+SCORING BANDS(use this as a guide, but the score can be any number. be strict but fair and consider that this is a real interview question so the answer can be a bit unstructured but if the main key points are there, you can consider it above good.):
+90-100  Exceptional: comprehensive, insightful, demonstrates senior-level expertise across technical and business dimensions
+80-89   Strong: solid technical foundation with good practical considerations and clear communication  
+70-79   Good: covers most key technical points, shows understanding of practical constraints
+60-69   Adequate: demonstrates basic competency but misses several important technical or business elements  
+50-59   Weak: significant gaps in technical understanding or practical application
+<50     Poor: major technical misconceptions, little demonstrated competency in the domain
 
 EXACT JSON FORMAT EXAMPLE (use this structure, adapt values):
 {{

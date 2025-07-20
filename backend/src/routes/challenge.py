@@ -23,7 +23,10 @@ from ..database.db import (
     reset_quota_if_needed,
     get_challenge_quota,
     save_scenario_answer,
-    update_scenario_evaluation
+    update_scenario_evaluation,
+    save_interview_answer,
+    get_user_interview_answers,
+    get_user_scenario_answers
 )
 from ..agents.ai_generator_agentic import (
     generate_interview_challenges,
@@ -31,7 +34,7 @@ from ..agents.ai_generator_agentic import (
     evaluate_scenario_answer
 )
 from ..utils import authenticate_and_get_user_details
-from ..database.models import get_db, ScenarioChallenge
+from ..database.models import get_db, ScenarioChallenge, InterviewAnswer
 import json
 from datetime import datetime
 
@@ -99,6 +102,21 @@ class ScenarioAnswerRequest(BaseModel):
     scenario_id: int
     question_index: int  # Which question in the scenario (0-based)
     user_answer: str
+
+class InterviewAnswerRequest(BaseModel):
+    """
+    Frontend Request Model for Interview Answer Submission
+    
+    USAGE:
+    {
+      "challenge_id": number,
+      "user_answer_id": number (0-3 for A/B/C/D),
+      "time_taken_seconds": number (optional)
+    }
+    """
+    challenge_id: int
+    user_answer_id: int  # Selected option (0-3 for A/B/C/D)
+    time_taken_seconds: int = None  # Optional timing data
 
 # ========================================================================================
 # HELPER FUNCTIONS
@@ -171,7 +189,7 @@ async def generate_interview_challenge(
         # Ensure quota exists and check availability
         quota = _ensure_quota_exists_and_reset(db, user_id, "interview")
         
-        if quota.quota_remaining <= challenge_request.num_questions:    
+        if quota.quota_remaining < challenge_request.num_questions:    
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="You have reached your daily quota for interview challenges"
@@ -266,7 +284,7 @@ async def generate_scenario_challenge(
         # Ensure quota exists and check availability
         quota = _ensure_quota_exists_and_reset(db, user_id, "scenario")
         
-        if quota.quota_remaining <= challenge_request.num_questions:
+        if quota.quota_remaining < challenge_request.num_questions:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="You have reached your daily quota for scenario challenges"
@@ -330,7 +348,7 @@ async def generate_scenario_challenge(
 @router.get("/challenges/history")
 async def get_challenge_history(request: Request, db: Session = Depends(get_db)):
     """
-    Get User's Challenge History (Read-only, Idempotent)
+    Get User's Challenge History with User Answers (Read-only, Idempotent)
     
     FRONTEND USAGE:
     const response = await fetch('/challenges/history', {
@@ -344,13 +362,14 @@ async def get_challenge_history(request: Request, db: Session = Depends(get_db))
     
     RESPONSE FORMAT:
     {
-      "challenges": [mixed array of interview and scenario challenges],
+      "challenges": [mixed array of interview and scenario challenges with user answers],
       "total_count": number,
       "interview_count": number,
       "scenario_count": number
     }
     
     NOTE: Challenges are sorted by date_created (newest first)
+    Each challenge includes user_answer data if available
     """
     
     user_details = authenticate_and_get_user_details(request)
@@ -360,11 +379,24 @@ async def get_challenge_history(request: Request, db: Session = Depends(get_db))
     interview_challenges = get_user_challenges(db, user_id=user_id, challenge_type="interview")
     scenario_challenges = get_user_challenges(db, user_id=user_id, challenge_type="scenario")
     
-    # Combine and return both types with type indicators
+    # Get user's answers for both types
+    interview_answers = get_user_interview_answers(db, user_id)
+    scenario_answers = get_user_scenario_answers(db, user_id)
+    
+    # Create lookup dictionaries for answers
+    interview_answers_dict = {answer.challenge_id: answer for answer in interview_answers}
+    scenario_answers_dict = {}
+    for answer in scenario_answers:
+        if answer.scenario_id not in scenario_answers_dict:
+            scenario_answers_dict[answer.scenario_id] = []
+        scenario_answers_dict[answer.scenario_id].append(answer)
+    
+    # Combine and return both types with type indicators and user answers
     all_challenges = []
     
-    # Add interview challenges with type indicator
+    # Add interview challenges with type indicator and user answers
     for challenge in interview_challenges:
+        user_answer = interview_answers_dict.get(challenge.id)
         challenge_dict = {
             "id": challenge.id,
             "type": "interview",  # Frontend: use this to distinguish challenge types
@@ -374,12 +406,20 @@ async def get_challenge_history(request: Request, db: Session = Depends(get_db))
             "date_created": challenge.date_created.isoformat(),
             "options": challenge.options,  # JSON string for interview challenges
             "correct_answer_id": challenge.correct_answer_id,
-            "explanation": challenge.explaination
+            "explanation": challenge.explaination,
+            # User answer data (null if not answered)
+            "user_answer": {
+                "user_answer_id": user_answer.user_answer_id if user_answer else None,
+                "is_correct": user_answer.is_correct if user_answer else None,
+                "date_completed": user_answer.date_completed.isoformat() if user_answer else None,
+                "time_taken_seconds": user_answer.time_taken_seconds if user_answer else None
+            } if user_answer else None
         }
         all_challenges.append(challenge_dict)
     
-    # Add scenario challenges with type indicator
+    # Add scenario challenges with type indicator and user answers
     for challenge in scenario_challenges:
+        user_answers = scenario_answers_dict.get(challenge.id, [])
         challenge_dict = {
             "id": challenge.id,
             "type": "scenario",  # Frontend: use this to distinguish challenge types
@@ -389,7 +429,18 @@ async def get_challenge_history(request: Request, db: Session = Depends(get_db))
             "date_created": challenge.date_created.isoformat(),
             "questions": challenge.questions,  # JSON string for scenario challenges
             "correct_answer": challenge.correct_answer,
-            "explanation": challenge.explanation
+            "explanation": challenge.explanation,
+            # User answers data (array of answers for each question)
+            "user_answers": [
+                {
+                    "question_index": answer.question_index,
+                    "user_answer": answer.user_answer,
+                    "llm_score": answer.llm_score,
+                    "llm_feedback": answer.llm_feedback,
+                    "llm_correct_answer": answer.llm_correct_answer,
+                    "created_at": answer.created_at.isoformat()
+                } for answer in user_answers
+            ] if user_answers else []
         }
         all_challenges.append(challenge_dict)
     
@@ -666,3 +717,69 @@ async def submit_scenario_answer(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error processing scenario answer: {str(e)}"
         )
+
+@router.post("/interview-answers", status_code=status.HTTP_201_CREATED)
+async def submit_interview_answer(
+    answer_request: InterviewAnswerRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """
+    Submit Interview (MCQ) Answer
+    
+    FRONTEND USAGE:
+    const response = await fetch('/interview-answers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
+      body: JSON.stringify({
+        challenge_id: 123,
+        user_answer_id: 2,  // 0-3 for A/B/C/D
+        time_taken_seconds: 45  // optional
+      })
+    });
+    
+    RESPONSE FORMAT:
+    {
+      "answer_id": number,
+      "is_correct": boolean,
+      "correct_answer_id": number,
+      "challenge_id": number,
+      "user_answer_id": number
+    }
+    
+    ERROR CODES:
+    404 - Challenge not found, 500 - Server error
+    """
+    try:
+        user_details = authenticate_and_get_user_details(request)
+        user_id = user_details.get("user_id")
+        
+        # Save user answer to database (automatically calculates correctness)
+        answer = save_interview_answer(
+            db, 
+            user_id, 
+            answer_request.challenge_id, 
+            answer_request.user_answer_id,
+            answer_request.time_taken_seconds
+        )
+        
+        # Get the challenge to return correct answer
+        challenge = answer.challenge
+        
+        # Return results to frontend
+        return {
+            "answer_id": answer.id,
+            "is_correct": answer.is_correct,
+            "correct_answer_id": challenge.correct_answer_id,
+            "challenge_id": answer_request.challenge_id,
+            "user_answer_id": answer_request.user_answer_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing interview answer: {str(e)}"
+        )
+

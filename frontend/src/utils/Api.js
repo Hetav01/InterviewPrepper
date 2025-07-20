@@ -79,6 +79,8 @@ export const useApi = () => {
         return await makeRequest("challenges/history");
     }
 
+
+
     // ------------------------------
     // Scenario Answer Submission
     // ------------------------------
@@ -89,6 +91,20 @@ export const useApi = () => {
                 scenario_id: scenarioId,
                 question_index: questionIndex,
                 user_answer: userAnswer
+            })
+        });
+    };
+
+    // ------------------------------
+    // Interview Answer Submission
+    // ------------------------------
+    const submitInterviewAnswer = async(challengeId, userAnswerId, timeTakenSeconds = null) => {
+        return await makeRequest("interview-answers", {
+            method: "POST",
+            body: JSON.stringify({
+                challenge_id: challengeId,
+                user_answer_id: userAnswerId,
+                time_taken_seconds: timeTakenSeconds
             })
         });
     };
@@ -169,7 +185,10 @@ export const useApi = () => {
       getChallengeHistory,
       getUserStats,
 
-      // Scenario answers
+
+
+      // Answer submission
       submitScenarioAnswer,
+      submitInterviewAnswer,
     };
 }

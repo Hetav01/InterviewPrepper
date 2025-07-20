@@ -40,63 +40,94 @@ export function Layout() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  return <div className="app-layout">
-    <header className="app-header">
+  return (
+    <div className="app-layout">
+      <header className="app-header">
         <div className="header-content">
-            <div style={{display: 'flex', alignItems: 'center', gap: '0.7em'}}>
-              <LogoBot className="navbar-logo" gradientId="logo-gradient-navbar" size="2.3em" />
-                              <h1 style={{margin: 0}}>IntrVw.</h1>
-            </div>
-            <nav>
-                <SignedIn>
-                    <Link to="/app">Generate Preperation Challenge</Link>
-                    <Link to="/history">History</Link>
-                    <Link to="/about">About</Link>
-                    <a href="#" className="portfolio-link">My Portfolio!</a>
-                    <UserButton />
-                </SignedIn>
-                <button
-                  className="mode-toggle-slider"
-                  aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-                  onClick={() => setDarkMode(dm => !dm)}
-                  type="button"
-                  tabIndex={0}
-                  style={{
-                    marginLeft: '1rem',
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    position: 'relative',
-                  }}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.7em" }}>
+            <LogoBot
+              className="navbar-logo"
+              gradientId="logo-gradient-navbar"
+              size="2.3em"
+            />
+            <h1 style={{ margin: 0 }}>IntrVw.</h1>
+          </div>
+          <nav>
+            <SignedIn>
+              <Link to="/app">Ace your IntrVw!</Link>
+              <Link to="/history">History</Link>
+              <Link to="/about">About</Link>
+              <a href="#" className="portfolio-link">
+                My Portfolio!
+              </a>
+              <UserButton />
+            </SignedIn>
+            <button
+              className="mode-toggle-slider"
+              aria-label={
+                darkMode ? "Switch to light mode" : "Switch to dark mode"
+              }
+              onClick={() => setDarkMode((dm) => !dm)}
+              type="button"
+              tabIndex={0}
+              style={{
+                marginLeft: "1rem",
+                background: "none",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                position: "relative",
+              }}
+            >
+              <span className="visually-hidden">
+                {darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              </span>
+              <div className="slider-track">
+                <span
+                  className="slider-icon slider-icon-left"
+                  aria-hidden="true"
+                  style={{ opacity: darkMode ? 0.5 : 1 }}
                 >
-                  <span className="visually-hidden">{darkMode ? 'Switch to light mode' : 'Switch to dark mode'}</span>
-                  <div className="slider-track">
-                    <span className="slider-icon slider-icon-left" aria-hidden="true" style={{opacity: darkMode ? 0.5 : 1}}>🌙</span>
-                    <span className="slider-icon slider-icon-right" aria-hidden="true" style={{opacity: darkMode ? 1 : 0.5}}>☀️</span>
-                    <span className={`slider-handle${darkMode ? ' right' : ''}`}></span>
-                  </div>
-                </button>
-            </nav>
+                  🌙
+                </span>
+                <span
+                  className="slider-icon slider-icon-right"
+                  aria-hidden="true"
+                  style={{ opacity: darkMode ? 1 : 0.5 }}
+                >
+                  ☀️
+                </span>
+                <span
+                  className={`slider-handle${darkMode ? " right" : ""}`}
+                ></span>
+              </div>
+            </button>
+          </nav>
         </div>
-    </header>
+      </header>
 
-    <main className="app-main">
+      <main className="app-main">
         <SignedOut>
-            <Navigate to="/sign-in" replace/>
+          <Navigate to="/sign-in" replace />
         </SignedOut>
         <SignedIn>
-            <Outlet />  
+          <Outlet />
         </SignedIn>
-    </main>
-    <footer>
-      <a className="global-copyright" href="" target="_blank" rel="noopener noreferrer">
-        Hetav Patel <span className="copyright-symbol">©</span> 2025
-      </a>
-    </footer>
-  </div>;
+      </main>
+      <footer>
+        <a
+          className="global-copyright"
+          href=""
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Hetav Patel <span className="copyright-symbol">©</span> 2025
+        </a>
+      </footer>
+    </div>
+  );
 }
 
 // The <Outlet /> component in React Router is a placeholder that renders the child route elements. 

@@ -1,5 +1,6 @@
 import "react";
 import { useState } from "react";
+import { useApi } from "../utils/Api";
 
 /**
  * The question model in pydantic will look something like:
@@ -13,6 +14,8 @@ import { useState } from "react";
  */
 
 export function InterviewChallenge({challenge, showExplanation = false, topic, numQuestions, difficulty, selectedOption, onSelectOption}) {
+  const { submitInterviewAnswer } = useApi();
+  
   // Defensive check to prevent crash if challenge or options is undefined
   if (!challenge || !challenge.options) {
     return (
@@ -31,16 +34,50 @@ export function InterviewChallenge({challenge, showExplanation = false, topic, n
   // this is the mcq challenge to answer questions about differnt ML and DL topics that often get asked in the interview.
 
   const [shouldShowExplanation, setShouldShowExplanation] = useState(showExplanation);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [startTime] = useState(Date.now());
 
   // the option should be string,
   const options = typeof challenge.options === "string" ? JSON.parse(challenge.options) : challenge.options;
 
-  const handleOptionSelect = (optionIndex) => {
-    if (selectedOption !== null) {
+  const handleOptionSelect = async (optionIndex) => {
+    if (selectedOption !== null || submitting || submitted) {
       return;
     }
-    onSelectOption(optionIndex);
-    setShouldShowExplanation(true);
+
+    try {
+      setSubmitting(true);
+      onSelectOption(optionIndex);
+      
+      // Calculate time taken
+      const timeTaken = Math.round((Date.now() - startTime) / 1000);
+      
+      // Submit answer to backend
+      console.log('Submitting interview answer:', {
+        challengeId: challenge.id,
+        userAnswerId: optionIndex,
+        timeTaken: timeTaken
+      });
+
+      const response = await submitInterviewAnswer(
+        challenge.id,
+        optionIndex,
+        timeTaken
+      );
+
+      console.log('Interview answer submission response:', response);
+      
+      setSubmitted(true);
+      setShouldShowExplanation(true);
+      
+    } catch (error) {
+      console.error('Error submitting interview answer:', error);
+      // Still show explanation even if submission fails
+      setShouldShowExplanation(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const getOptionClass = (optionIndex) => {
@@ -81,6 +118,7 @@ export function InterviewChallenge({challenge, showExplanation = false, topic, n
               key={index}
               className={getOptionClass(index)}
               onClick={() => handleOptionSelect(index)}
+              style={{ cursor: selectedOption !== null || submitting ? 'not-allowed' : 'pointer' }}
             >
               <div className="option-letter">
                 {String.fromCharCode(65 + index)}
@@ -97,6 +135,20 @@ export function InterviewChallenge({challenge, showExplanation = false, topic, n
             </div>
           ))}
         </div>
+        
+        {submitting && (
+          <div className="submission-status">
+            <span className="submit-spinner"></span>
+            Submitting your answer...
+          </div>
+        )}
+        
+        {submitted && (
+          <div className="submission-status success">
+            <span className="submit-checkmark">✓</span>
+            Answer submitted successfully!
+          </div>
+        )}
       </div>
       
       {shouldShowExplanation && selectedOption !== null && (
