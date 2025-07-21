@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 
-const SESSION_TIMEOUT = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
-const WARNING_TIME = 5 * 60 * 1000; // 5 minutes before timeout
+const SESSION_TIMEOUT = 15 * 60 * 1000; // 15 minutes in milliseconds
+const WARNING_TIME = 2 * 60 * 1000; // 2 minutes before timeout
 const STORAGE_KEY = 'session_start_time';
 
 export const useSessionTimeout = () => {
@@ -22,11 +22,11 @@ export const useSessionTimeout = () => {
         const startTime = Date.now();
         localStorage.setItem(STORAGE_KEY, startTime.toString());
 
-        // Set warning timer (5 minutes before timeout)
+        // Set warning timer (2 minutes before timeout)
         warningRef.current = setTimeout(() => {
             const remaining = Math.ceil((SESSION_TIMEOUT - WARNING_TIME) / 1000 / 60);
             const shouldContinue = window.confirm(
-                `Your session will expire in 5 minutes due to inactivity. You will be automatically signed out.\n\nClick OK to stay signed in, or Cancel to sign out now.`
+                `Your session will expire in 2 minutes due to inactivity. You will be automatically signed out.\n\nClick OK to stay signed in, or Cancel to sign out now.`
             );
             
             if (!shouldContinue) {
