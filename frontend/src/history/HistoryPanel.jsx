@@ -6,6 +6,7 @@ import HistoryFiltersSort from "./HistoryFiltersSort";
 import HistorySearchBar from "./HistorySearchBar";
 import HistoryTopicBreakdown from "./HistoryTopicBreakdown";
 import { HistoryScoreTracker } from "./HistoryScoreTracker";
+import { EditIcon, LightbulbIcon, BookIcon, WarningIcon, ChecklistIcon, ZapIcon, BrainIcon, CelebrationIcon } from "../ExtraComponents/icons";
 
 export function HistoryPanel() {
   const [history, setHistory] = useState([]);
@@ -219,7 +220,9 @@ export function HistoryPanel() {
                     
                     <div className="challenge-meta">
                         <div className="meta-item">
-                            <span className="meta-icon">📝</span>
+                            <span className="meta-icon">
+                  <ZapIcon size={18} color="currentColor" />
+                </span>
                             <span>{challenge.topic}</span>
                         </div>
                         <div className="meta-item">
@@ -348,7 +351,10 @@ export function HistoryPanel() {
                                         <h4>Your Result</h4>
                                         <div className={`result-summary ${selectedChallenge.user_answer.is_correct ? 'correct' : 'incorrect'}`}>
                                             <div className="result-icon">
-                                                {selectedChallenge.user_answer.is_correct ? '🎉' : '📚'}
+                                                {selectedChallenge.user_answer.is_correct ? 
+                  <CelebrationIcon size={22} color="currentColor" /> : 
+                  <BookIcon size={22} color="currentColor" />
+                }
                                             </div>
                                             <div className="result-text">
                                                 {selectedChallenge.user_answer.is_correct ? (
@@ -397,7 +403,10 @@ export function HistoryPanel() {
                                                                 {/* Individual Question Explanation */}
                                                                 {question.explanation && (
                                                                     <div className="question-explanation">
-                                                                        <h6>📋 What to cover in your answer:</h6>
+                                                                        <h6>
+                          <ChecklistIcon size={16} color="currentColor" style={{ marginRight: '0.5rem' }} />
+                          What to cover in your answer:
+                        </h6>
                                                                         <p>{question.explanation}</p>
                                                                     </div>
                                                                 )}
@@ -418,14 +427,20 @@ export function HistoryPanel() {
                                                                 
                                                                 {userAnswer.llm_feedback && (
                                                                     <div className="feedback-section">
-                                                                        <h6>🤖 AI Feedback</h6>
+                                                                        <h6>
+                          <BrainIcon size={18} color="currentColor" style={{ marginRight: '0.5rem' }} />
+                          AI Feedback
+                        </h6>
                                                                         <p>{userAnswer.llm_feedback}</p>
                                                                     </div>
                                                                 )}
                                                                 
                                                                 {userAnswer.llm_correct_answer && (
                                                                     <div className="ideal-answer-section">
-                                                                        <h6>💡 Ideal Answer</h6>
+                                                                        <h6>
+                          <LightbulbIcon size={16} color="currentColor" style={{ marginRight: '0.5rem' }} />
+                          Ideal Answer
+                        </h6>
                                                                         <p>{userAnswer.llm_correct_answer}</p>
                                                                     </div>
                                                                 )}
@@ -445,7 +460,10 @@ export function HistoryPanel() {
                                 {/* Overall Scenario Guidance (separate from individual questions) */}
                                 {selectedChallenge.correct_answer && (
                                     <div className="scenario-overall-guidance">
-                                        <h4>📚 Overall Scenario Guidance</h4>
+                                        <h4>
+                          <BookIcon size={20} color="currentColor" style={{ marginRight: '0.5rem' }} />
+                          Overall Scenario Guidance
+                        </h4>
                                         <div className="guidance-content">
                                             <p>{selectedChallenge.correct_answer}</p>
                                         </div>
@@ -454,7 +472,10 @@ export function HistoryPanel() {
                                 
                                 {selectedChallenge.explanation && (
                                     <div className="scenario-evaluation-criteria">
-                                        <h4>⚖️ Evaluation Criteria</h4>
+                                        <h4>
+                          <ChecklistIcon size={20} color="currentColor" style={{ marginRight: '0.5rem' }} />
+                          Evaluation Criteria
+                        </h4>
                                         <div className="criteria-content">
                                             <p>{selectedChallenge.explanation}</p>
                                         </div>
@@ -484,7 +505,9 @@ export function HistoryPanel() {
         return (
             <div className="history-panel">
                                     <div className="error-state">
-                        <div className="error-icon">⚠️</div>
+                        <div className="error-icon">
+                      <WarningIcon size={24} color="currentColor" />
+                    </div>
                         <h3>Oops! Something went wrong</h3>
       <p>{error}</p>
                         <button onClick={loadHistoryData} className="retry-btn">
@@ -524,7 +547,9 @@ export function HistoryPanel() {
                     
                     {filteredHistory.length === 0 ? (
                         <div className="empty-state">
-                            <div className="empty-icon">📚</div>
+                            <div className="empty-icon">
+                      <BookIcon size={48} color="currentColor" />
+                    </div>
                             <h3>No challenges found</h3>
                             {filter === "all" ? (
                                 <div>

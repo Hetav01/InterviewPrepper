@@ -1,6 +1,7 @@
 import "react";
 import { useState } from "react";
 import { useApi } from "../utils/Api";
+import { ChecklistIcon, LightbulbIcon, ZapIcon } from "../ExtraComponents/icons";
 
 /**
  * The question model in pydantic will look something like:
@@ -98,7 +99,9 @@ export function InterviewChallenge({challenge, showExplanation = false, topic, n
     <div className="mcq-challenge-container">
       <div className="mcq-challenge-header">
         <div className="mcq-difficulty-badge">
-          <span className="difficulty-icon">⚡</span>
+          <span className="difficulty-icon">
+            <ZapIcon size={18} color="currentColor" />
+          </span>
           <span className={`difficulty-text ${challenge.difficulty.toLowerCase()}`}>
             {challenge.difficulty}
           </span>
@@ -106,12 +109,18 @@ export function InterviewChallenge({challenge, showExplanation = false, topic, n
       </div>
       
       <div className="mcq-question-section">
-        <h3 className="mcq-question-title">📋 Question</h3>
+        <h3 className="mcq-question-title">
+                      <ChecklistIcon size={22} color="currentColor" style={{ marginRight: '0.5rem' }} />
+          Question
+        </h3>
         <p className="mcq-question-text">{challenge.title}</p>
       </div>
       
       <div className="mcq-options-section">
-        <h4 className="mcq-options-title">📝 Choose the correct answer:</h4>
+        <h4 className="mcq-options-title">
+          <ChecklistIcon size={20} color="currentColor" style={{ marginRight: '0.5rem' }} />
+          Choose the correct answer:
+        </h4>
         <div className="mcq-options-container" >
           {options.map((option, index) => (
             <div
@@ -153,7 +162,10 @@ export function InterviewChallenge({challenge, showExplanation = false, topic, n
       
       {shouldShowExplanation && selectedOption !== null && (
         <div className="mcq-explanation-section">
-          <h4 className="mcq-explanation-title">💡 Explanation</h4>
+          <h4 className="mcq-explanation-title">
+            <LightbulbIcon size={20} color="currentColor" style={{ marginRight: '0.5rem' }} />
+            Explanation
+          </h4>
           <div className="mcq-explanation-content">
             <p>{challenge.explanation || challenge.explaination}</p>
           </div>

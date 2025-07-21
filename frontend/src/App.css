@@ -1453,7 +1453,7 @@ body:not(.dark-mode) .slider-track {
 }
 
 .slider-icon {
-  font-size: 1.5em;
+  font-size: 1.75em;
   z-index: 2;
   transition: opacity 0.25s;
   user-select: none;

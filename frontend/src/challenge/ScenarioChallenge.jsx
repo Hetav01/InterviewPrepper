@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useApi } from "../utils/Api";
+import { EditIcon, LightbulbIcon, ZapIcon, BrainIcon } from "../ExtraComponents/icons";
 
 /**
  * Scenario Challenge Data Model Example:
@@ -141,7 +142,9 @@ export function ScenarioChallenge({ challenge, topic, numQuestions, difficulty }
     <div className="scenario-challenge-container">
       <div className="scenario-challenge-header">
         <div className="scenario-difficulty-badge">
-          <span className="difficulty-icon">⚡</span>
+          <span className="difficulty-icon">
+            <ZapIcon size={18} color="currentColor" />
+          </span>
           <span className={`difficulty-text ${challenge.difficulty.toLowerCase()}`}>
             {challenge.difficulty}
           </span>
@@ -149,7 +152,10 @@ export function ScenarioChallenge({ challenge, topic, numQuestions, difficulty }
       </div>
       
       <div className="scenario-description-section">
-        <h3 className="scenario-description-title">🧠 Scenario</h3>
+        <h3 className="scenario-description-title">
+          <BrainIcon size={22} color="currentColor" style={{ marginRight: '0.5rem' }} />
+          Scenario
+        </h3>
         <p className="scenario-description-text">{challenge.title}</p>
       </div>
       
@@ -210,7 +216,10 @@ export function ScenarioChallenge({ challenge, topic, numQuestions, difficulty }
               {feedbacks[idx] && (
                 <div className="scenario-feedback-section">
                   <div className="feedback-header">
-                    <h4 className="feedback-title">🤖 AI Feedback</h4>
+                    <h4 className="feedback-title">
+                      <BrainIcon size={20} color="currentColor" style={{ marginRight: '0.5rem' }} />
+                      AI Feedback
+                    </h4>
                     <div className="feedback-score-badge">
                       <span className="score-value">{feedbacks[idx].score}/100</span>
                       <span className={`score-status ${feedbacks[idx].is_correct ? 'correct' : 'needs-improvement'}`}>
@@ -221,7 +230,10 @@ export function ScenarioChallenge({ challenge, topic, numQuestions, difficulty }
                   
                   <div className="feedback-content">
                     <div className="feedback-text-section">
-                      <h5 className="feedback-section-title">📝 Detailed Feedback</h5>
+                      <h5 className="feedback-section-title">
+                        <EditIcon size={18} color="currentColor" style={{ marginRight: '0.5rem' }} />
+                        Detailed Feedback
+                      </h5>
                       <div className="feedback-text-content">
                         <p>{feedbacks[idx].feedback_text}</p>
                       </div>
@@ -229,7 +241,10 @@ export function ScenarioChallenge({ challenge, topic, numQuestions, difficulty }
                     
                     {feedbacks[idx].correct_answer && (
                       <div className="suggested-answer-section">
-                        <h5 className="feedback-section-title">💡 Suggested Answer</h5>
+                        <h5 className="feedback-section-title">
+                          <LightbulbIcon size={18} color="currentColor" style={{ marginRight: '0.5rem' }} />
+                          Suggested Answer
+                        </h5>
                         <div className="suggested-answer-content">
                           <p>{feedbacks[idx].correct_answer}</p>
                         </div>

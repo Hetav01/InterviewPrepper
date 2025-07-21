@@ -1,5 +1,6 @@
 import React from "react";
 import AnimatedNumber from "./AnimatedNumber";
+import { TargetIcon, BriefcaseIcon, BookIcon, BrainIcon } from "../ExtraComponents/icons";
 
 export default function HistoryStatsCard({ stats, todaysCount }) {
     if (!stats) return null;
@@ -11,7 +12,9 @@ export default function HistoryStatsCard({ stats, todaysCount }) {
             </div>
             <div className="stats-grid">
                 <div className="stat-card total">
-                    <div className="stat-icon">🎯</div>
+                    <div className="stat-icon">
+                      <TargetIcon size={26} color="currentColor" />
+                    </div>
                     <div className="stat-content">
                         <div className="stat-number">
                             <AnimatedNumber value={stats.totalChallenges} duration={1800} delay={200} />
@@ -21,7 +24,9 @@ export default function HistoryStatsCard({ stats, todaysCount }) {
                     </div>
                 </div>
                 <div className="stat-card interview">
-                    <div className="stat-icon">💼</div>
+                    <div className="stat-icon">
+                      <BriefcaseIcon size={26} color="currentColor" />
+                    </div>
                     <div className="stat-content">
                         <div className="stat-number">
                             <AnimatedNumber value={stats.interviewChallenges} duration={1600} delay={400} />
@@ -31,7 +36,9 @@ export default function HistoryStatsCard({ stats, todaysCount }) {
                     </div>
                 </div>
                 <div className="stat-card scenario">
-                    <div className="stat-icon">🧠</div>
+                    <div className="stat-icon">
+                      <BrainIcon size={26} color="currentColor" />
+                    </div>
                     <div className="stat-content">
                         <div className="stat-number">
                             <AnimatedNumber value={stats.scenarioChallenges} duration={1600} delay={600} />
@@ -41,7 +48,9 @@ export default function HistoryStatsCard({ stats, todaysCount }) {
                     </div>
                 </div>
                 <div className="stat-card topics">
-                    <div className="stat-icon">📚</div>
+                    <div className="stat-icon">
+                      <BookIcon size={26} color="currentColor" />
+                    </div>
                     <div className="stat-content">
                         <div className="stat-number">
                             <AnimatedNumber value={Object.keys(stats.topicBreakdown).length} duration={1400} delay={800} />

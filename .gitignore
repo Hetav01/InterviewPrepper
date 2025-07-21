@@ -2,6 +2,7 @@
 backend/.venv/*
 backend/__pycache__/
 backend/src/agents/tests/*
+backend/src/secretClerkWebhook.txt
 *.pyc
 
 # Node (frontend, if you add one)

@@ -3,6 +3,7 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import LogoBot from '../utils/LogoBot.jsx';
 import { useSessionTimeout, getSessionTimeRemaining, formatTimeRemaining } from '../utils/SessionManager.js';
+import { ClockIcon, SunIcon, MoonIcon } from '../ExtraComponents/icons';
 
 export function Layout() {
   // Initialize session timeout
@@ -118,7 +119,7 @@ export function Layout() {
                   e.currentTarget.style.backgroundColor = sessionTimeRemaining < 5 * 60 * 1000 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)';
                 }}
               >
-                <span style={{ fontSize: '1rem' }}>⏱️</span>
+                <ClockIcon size={18} color="currentColor" />
                 {formatTimeRemaining(sessionTimeRemaining)}
               </div>
               <UserButton />
@@ -151,14 +152,14 @@ export function Layout() {
                   aria-hidden="true"
                   style={{ opacity: darkMode ? 0.5 : 1 }}
                 >
-                  🌙
+                  <MoonIcon size={18} color="currentColor" />
                 </span>
                 <span
                   className="slider-icon slider-icon-right"
                   aria-hidden="true"
                   style={{ opacity: darkMode ? 1 : 0.5 }}
                 >
-                  ☀️
+                  <SunIcon size={18} color="currentColor" />
                 </span>
                 <span
                   className={`slider-handle${darkMode ? " right" : ""}`}

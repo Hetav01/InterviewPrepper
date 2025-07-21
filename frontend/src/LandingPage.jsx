@@ -6,6 +6,7 @@ import LogoBot from './utils/LogoBot.jsx';
 import NET from 'vanta/dist/vanta.net.min';
 import * as THREE from 'three';
 import { useLoading } from './utils/LoadingContext.jsx';
+import { TargetIcon, LightbulbIcon, ChartIcon } from './ExtraComponents/icons';
 // import TechStackAnimation from './ExtraComponents/TechStackAnimation';
 
 export default function LandingPage() {
@@ -15,6 +16,7 @@ export default function LandingPage() {
   const fullText = 'IntrVw.';
   const [showButtons, setShowButtons] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
+  const [showFeatures, setShowFeatures] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -45,11 +47,11 @@ export default function LandingPage() {
           el: vantaRef.current,
           THREE,
           color: 0x3b82f6,
-          backgroundColor: 0x111827,
-          highlightColor: 0x1e40af,
-          points: 10.0,
-          maxDistance: 25.0,
-          spacing: 20.0,
+          backgroundColor: 0x0f172a,
+          highlightColor: 0x1d4ed8,
+          points: 8.0,
+          maxDistance: 20.0,
+          spacing: 18.0,
           showDots: true,
           mouseControls: true,
           touchControls: true,
@@ -76,12 +78,14 @@ export default function LandingPage() {
       }, 60); // Reduced from 80ms for faster text animation
       return () => clearTimeout(timeout);
     } else {
-      // Faster, more reliable animation sequence
-      const descriptionTimer = setTimeout(() => setShowDescription(true), 200); // Reduced from 300ms
-      const buttonTimer = setTimeout(() => setShowButtons(true), 500); // Reduced from 900ms
+      // Enhanced animation sequence with features
+      const descriptionTimer = setTimeout(() => setShowDescription(true), 200);
+      const featuresTimer = setTimeout(() => setShowFeatures(true), 400);
+      const buttonTimer = setTimeout(() => setShowButtons(true), 600);
       
       return () => {
         clearTimeout(descriptionTimer);
+        clearTimeout(featuresTimer);
         clearTimeout(buttonTimer);
       };
     }
@@ -109,49 +113,134 @@ export default function LandingPage() {
       <div ref={vantaRef} className="landing-vanta-bg" />
 
       {isLoaded ? (
-        <div className={`landing-bg dark-mode${fadeOut ? ' fade-out' : ''} fade-in`}>
+        <div
+          className={`landing-bg dark-mode${
+            fadeOut ? " fade-out" : ""
+          } fade-in`}
+        >
           {/* Logo with gradient */}
           <div className="landing-logo-container">
-            <LogoBot className="landing-logo-gradient" gradientId="logo-gradient-landing" size={135} />
+            <LogoBot
+              className="landing-logo-gradient"
+              gradientId="logo-gradient-landing"
+              size={122}
+            />
           </div>
-          <h1 className="landing-title landing-gradient-title" style={{
-            background: 'linear-gradient(90deg, #f97316 0%, #ea580c 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            color: 'transparent',
-            fontSize: '4.2rem',
-            marginBottom: '0.7rem',
-          }}>{displayedText}</h1>
-          
-          {/* Description */}
+
+          {/* Enhanced title with better colors */}
+          <h1
+            className="landing-title landing-gradient-title"
+            style={{
+              background:
+                "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              color: "transparent",
+              fontSize: "3.78rem",
+              marginBottom: "0.63rem",
+              fontWeight: "700",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {displayedText}
+          </h1>
+
+          {/* Enhanced description */}
           {showDescription && (
             <div className="landing-description fade-in-up">
-              <p style={{ color: '#fff', fontWeight: 600 }}>
-                Master ML interviews with AI-powered practice challenges.
+              <p
+                style={{
+                  color: "#e2e8f0",
+                  fontWeight: "500",
+                  fontSize: "1.125rem",
+                  marginBottom: "0.45rem",
+                }}
+              >
+                Your Multi-Agent AI Interview Coach
+              </p>
+              <p
+                style={{
+                  color: "#94a3b8",
+                  fontWeight: "400",
+                  fontSize: "0.9rem",
+                  maxWidth: "540px",
+                  lineHeight: "1.6",
+                }}
+              >
+                Master technical interviews with personalized challenges,
+                real-time feedback, and comprehensive learning insights.
               </p>
             </div>
           )}
-          
+
+          {/* Feature highlights */}
+          {showFeatures && (
+            <div className="landing-features fade-in-up">
+              <div className="feature-grid">
+                <div className="feature-item">
+                  <div className="feature-icon">
+                    <TargetIcon size={26} color="currentColor" />
+                  </div>
+                  <div className="feature-text">
+                    <h3>Personalized Challenges</h3>
+                    <p>
+                      AI-generated questions tailored to your skill level and
+                      target roles
+                    </p>
+                  </div>
+                </div>
+                <div className="feature-item">
+                  <div className="feature-icon">
+                    <LightbulbIcon size={26} color="currentColor" />
+                  </div>
+                  <div className="feature-text">
+                    <h3>Smart Feedback</h3>
+                    <p>
+                      Detailed explanations and improvement suggestions for
+                      every answer
+                    </p>
+                  </div>
+                </div>
+                <div className="feature-item">
+                  <div className="feature-icon">
+                    <ChartIcon size={26} color="currentColor" />
+                  </div>
+                  <div className="feature-text">
+                    <h3>Progress Tracking</h3>
+                    <p>
+                      Monitor your performance across different topics and
+                      difficulty levels
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Reduced spacing before buttons */}
-          <div style={{ height: '30px' }}></div>
-          
+          <div style={{ height: "0.75rem" }}></div>
+
           <SignedOut>
             {showButtons && (
               <div className="landing-btn-group fade-in-up">
                 <button
                   className="landing-btn landing-btn-signin"
-                  onClick={() => handleButtonClick('/sign-in')}
-                  onMouseEnter={e => e.currentTarget.classList.add('hovered')}
-                  onMouseLeave={e => e.currentTarget.classList.remove('hovered')}
+                  onClick={() => handleButtonClick("/sign-in")}
+                  onMouseEnter={(e) => e.currentTarget.classList.add("hovered")}
+                  onMouseLeave={(e) =>
+                    e.currentTarget.classList.remove("hovered")
+                  }
                 >
                   Sign In
                 </button>
                 <button
                   className="landing-btn landing-btn-signup"
-                  onClick={() => handleButtonClick('/sign-up')}
-                  onMouseEnter={e => e.currentTarget.classList.add('hovered')}
-                  onMouseLeave={e => e.currentTarget.classList.remove('hovered')}
+                  onClick={() => handleButtonClick("/sign-up")}
+                  onMouseEnter={(e) => e.currentTarget.classList.add("hovered")}
+                  onMouseLeave={(e) =>
+                    e.currentTarget.classList.remove("hovered")
+                  }
                 >
                   Sign Up
                 </button>
@@ -159,13 +248,46 @@ export default function LandingPage() {
             )}
           </SignedOut>
 
+          {/* Trust indicators */}
+          {showButtons && (
+            <div className="landing-trust fade-in-up">
+              <p
+                style={{
+                  color: "#64748b",
+                  fontSize: "0.788rem",
+                  marginTop: "1.8rem",
+                }}
+              >
+                Powered by{" "}
+                <a
+                  href="https://langchain-ai.github.io/langgraph/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#3b82f6", textDecoration: "none" }}
+                >
+                  LangGraph
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://openai.com/api/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#3b82f6", textDecoration: "none" }}
+                >
+                  OpenAI
+                </a>
+                . • No credit card required
+              </p>
+            </div>
+          )}
+
           {/* Tech Stack Animation - Commented out for now */}
           {/* {showTechStack && <TechStackAnimation />} */}
 
           {/* Copyright Notice */}
-          <div className="landing-copyright">
+          {/* <div className="landing-copyright">
             Hetav Patel <span className="copyright-symbol">©</span> 2025
-          </div>
+          </div> */}
         </div>
       ) : (
         <div className="landing-loading-placeholder"></div>

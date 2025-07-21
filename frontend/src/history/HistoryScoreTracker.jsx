@@ -1,4 +1,5 @@
 import React from "react";
+import { TargetIcon, LightbulbIcon, BrainIcon, ZapIcon, CalendarIcon } from "../ExtraComponents/icons";
 
 export function HistoryScoreTracker({ history = [] }) {
   // Helper function to get date ranges
@@ -117,7 +118,9 @@ export function HistoryScoreTracker({ history = [] }) {
       <div className="score-stats-grid single-row">
         <div className="score-stat-card today combined">
           <div className="score-stat-header">
-            <div className="score-stat-icon">📅</div>
+                            <div className="score-stat-icon">
+                  <CalendarIcon size={26} color="currentColor" />
+                </div>
             <div className="score-stat-period">Today's Overall</div>
           </div>
           <div className="score-stat-content">
@@ -150,7 +153,9 @@ export function HistoryScoreTracker({ history = [] }) {
           {/* Interview Performance */}
           <div className="score-type-section">
             <div className="score-type-header">
-              <span className="type-icon">🎯</span>
+                              <span className="type-icon">
+                  <TargetIcon size={18} color="currentColor" />
+                </span>
               <h5>Interview Challenges</h5>
               <span className="type-description">Multiple Choice Questions</span>
             </div>
@@ -215,7 +220,9 @@ export function HistoryScoreTracker({ history = [] }) {
           {/* Scenario Performance */}
           <div className="score-type-section">
             <div className="score-type-header">
-              <span className="type-icon">🧠</span>
+                              <span className="type-icon">
+                  <BrainIcon size={18} color="currentColor" />
+                </span>
               <h5>Scenario Challenges</h5>
               <span className="type-description">Open-ended Questions (70%+ = Success)</span>
             </div>
@@ -288,26 +295,34 @@ export function HistoryScoreTracker({ history = [] }) {
           <div className="score-insights-content">
             {overallTodayTotal > 0 ? (
               <div className="insight-item">
-                <span className="insight-icon">⚡</span>
+                <span className="insight-icon">
+                  <ZapIcon size={18} color="currentColor" />
+                </span>
                 <span>Today: {overallTodayDisplay.percentage}% overall accuracy ({interviewTodayDisplay.percentage}% MCQ, {scenarioTodayDisplay.percentage}% Scenario)</span>
               </div>
             ) : (
               <div className="insight-item">
-                <span className="insight-icon">💡</span>
+                <span className="insight-icon">
+                  <LightbulbIcon size={18} color="currentColor" />
+                </span>
                 <span>Start practicing today to track your progress!</span>
               </div>
             )}
             
             {scores.interview.overall.total >= 5 && (
               <div className="insight-item">
-                <span className="insight-icon">🎯</span>
+                <span className="insight-icon">
+                  <TargetIcon size={18} color="currentColor" />
+                </span>
                 <span>Interview practice: {scores.interview.overall.correct}/{scores.interview.overall.total} correct ({interviewOverallDisplay.percentage}%)</span>
               </div>
             )}
             
             {scores.scenario.overall.total >= 3 && (
               <div className="insight-item">
-                <span className="insight-icon">🧠</span>
+                <span className="insight-icon">
+                  <BrainIcon size={18} color="currentColor" />
+                </span>
                 <span>Scenario practice: {scores.scenario.overall.correct}/{scores.scenario.overall.total} successful ({scenarioOverallDisplay.percentage}%)</span>
               </div>
             )}

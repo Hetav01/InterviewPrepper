@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { InterviewChallenge } from "./InterviewChallenge";
 import { ScenarioChallenge } from "./ScenarioChallenge";
 import { useApi } from "../utils/Api";
+import OnboardingModal from "../components/OnboardingModal";
 
 export function ChallengeGenerator() {
     // State for current challenge data
@@ -26,6 +27,9 @@ export function ChallengeGenerator() {
         scenario: { quota_remaining: 0, total_daily_quota: 10 }
     });
     const [quotaLoading, setQuotaLoading] = useState(true);
+    
+    // Onboarding state
+    const [showOnboarding, setShowOnboarding] = useState(false);
 
     const { 
         generateChallenge, 
@@ -37,6 +41,18 @@ export function ChallengeGenerator() {
     // Initialize quotas on component mount
     useEffect(() => {
         initializeComponent();
+    }, []);
+    
+    // Check if user is new and show onboarding
+    useEffect(() => {
+        const hasSeenOnboarding = localStorage.getItem('intrvw_onboarding_completed');
+        if (!hasSeenOnboarding) {
+            // Small delay to ensure component is fully loaded
+            const timer = setTimeout(() => {
+                setShowOnboarding(true);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
     }, []);
     
     // Auto-adjust num questions when challenge type changes
@@ -146,6 +162,11 @@ export function ChallengeGenerator() {
         setNumQuestions(challengeType === 'scenario' ? 3 : 5);
         
         console.log('Challenge content and settings reset');
+    };
+    
+    const handleOnboardingClose = () => {
+        setShowOnboarding(false);
+        localStorage.setItem('intrvw_onboarding_completed', 'true');
     };
 
     const getNextResetTime = () => {
@@ -324,6 +345,11 @@ export function ChallengeGenerator() {
 
     return (
         <div className="challenge-generator-panel">
+            <OnboardingModal 
+                isOpen={showOnboarding} 
+                onClose={handleOnboardingClose} 
+            />
+            
             <div className="challenge-generator-header">
                 <h1 className="challenge-title">Ace your IntrVw!</h1>
                 <p>Generate personalized ML interview challenges to enhance your preparation</p>
