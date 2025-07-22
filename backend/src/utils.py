@@ -29,7 +29,8 @@ def authenticate_and_get_user_details(request):
                     "http://localhost:5173",
                     "http://localhost:5174",
                     "https://intrvu-production.up.railway.app",
-                    "https://intrvu-one.vercel.app",  # Add your Vercel domain
+                    "https://intrvu-one.vercel.app",
+                    "https://intervu.store",  # Your custom domain
                 ],
                 jwt_key= os.getenv("JWT_KEY")
             )
