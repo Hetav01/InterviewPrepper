@@ -14,7 +14,7 @@ app.add_middleware(
         "http://localhost:5173",
         "https://intrvu-production.up.railway.app",
         "https://intrvu-one.vercel.app",
-        "https://intervu.store",  # Your custom domain
+        "https://intrvu.store",  # Your custom domain
     ],
     allow_credentials=True,
     allow_methods=["*"],
