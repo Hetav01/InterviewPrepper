@@ -31,6 +31,7 @@ def authenticate_and_get_user_details(request):
                     "https://intrvu-production.up.railway.app",
                     "https://intrvu-one.vercel.app",
                     "https://intrvu.store",  # Your custom domain
+                    "https://www.intrvu.store",  # Your custom domain with www
                 ],
                 jwt_key= os.getenv("JWT_KEY")
             )

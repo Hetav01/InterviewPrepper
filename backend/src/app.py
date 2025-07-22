@@ -15,6 +15,7 @@ app.add_middleware(
         "https://intrvu-production.up.railway.app",
         "https://intrvu-one.vercel.app",
         "https://intrvu.store",  # Your custom domain
+        "https://www.intrvu.store",  # Your custom domain with www
     ],
     allow_credentials=True,
     allow_methods=["*"],
