@@ -2,6 +2,8 @@ import { useAuth } from "@clerk/clerk-react";
 
 export const useApi = () => {
     const { getToken } = useAuth();
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+    
     const makeRequest = async (endpoint, options = {}) => {
         const token = await getToken();
         const defaultOptions = {
@@ -11,9 +13,10 @@ export const useApi = () => {
             }
         }
 
-        const response = await fetch(`http://localhost:8000/api/${endpoint}`, {
-            ...defaultOptions,
-            ...options
+        
+        const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
+          ...defaultOptions,
+          ...options,
         });
         
         if (!response.ok) {
