@@ -2,14 +2,13 @@
 
 ## Overview
 
-A cutting-edge React application built with Vite that delivers an exceptional user experience for ML interview preparation. Features a sophisticated UI with real-time interactions, smooth animations, and responsive design that works seamlessly across all devices.
+A cutting-edge React application built with Vite that delivers an exceptional user experience for interview preparation. Features a sophisticated UI with real-time interactions, smooth animations, and responsive design that works seamlessly across all devices.
 
 ## Tech Stack
 
 ### Core Technologies
 - **React 18**: Latest React with hooks and concurrent features
 - **Vite**: Lightning-fast build tool and dev server
-- **TypeScript**: Type-safe development (easily convertible)
 - **React Router**: Client-side routing with lazy loading
 
 ### UI & Styling
@@ -21,11 +20,6 @@ A cutting-edge React application built with Vite that delivers an exceptional us
 - **Clerk**: Modern authentication with social logins
 - **React Context**: Global state management for loading states
 - **Local Storage**: Persistent user preferences and onboarding
-
-### Development Tools
-- **ESLint**: Code quality and consistency
-- **Vite**: Hot module replacement and optimized builds
-- **Git Hooks**: Pre-commit linting and formatting
 
 ## Project Structure
 
@@ -94,20 +88,17 @@ VITE_API_BASE_URL="http://localhost:8000"
 - **Interactive Backgrounds**: Vanta.js 3D effects
 - **Responsive Design**: Works on all screen sizes
 - **Dark/Light Mode**: Theme switching with persistence
-- **Loading States**: Comprehensive loading system
 
 ### Interview Features
 - **Challenge Generation**: Dynamic question creation
 - **Real-time Feedback**: Instant evaluation and scoring
 - **Progress Tracking**: Detailed analytics and insights
 - **History Management**: Complete challenge history
-- **Topic Filtering**: Organized by ML concepts
 
 ### Performance Optimizations
 - **Code Splitting**: Lazy-loaded components
 - **Image Optimization**: Optimized assets and SVGs
 - **Bundle Optimization**: Tree shaking and minification
-- **Caching Strategy**: Efficient resource loading
 
 ## Development Commands
 
@@ -141,7 +132,6 @@ npm run test:watch   # Watch mode
 ### State Management
 - **LoadingContext**: Global loading state
 - **SessionManager**: User session handling
-- **Api Utilities**: Backend communication
 
 ## Styling System
 
@@ -149,13 +139,11 @@ npm run test:watch   # Watch mode
 - **Custom Properties**: CSS variables for theming
 - **BEM Methodology**: Organized class naming
 - **Mobile-First**: Responsive design approach
-- **Animation System**: Consistent motion design
 
 ### Theme System
 - **Dark/Light Modes**: Automatic theme switching
 - **Color Palette**: Consistent brand colors
 - **Typography**: Scalable font system
-- **Spacing**: Systematic spacing scale
 
 ## Performance Features
 
@@ -163,13 +151,11 @@ npm run test:watch   # Watch mode
 - **Image Optimization**: WebP and responsive images
 - **Bundle Analysis**: Optimized bundle sizes
 - **Caching**: Efficient resource caching
-- **PWA Ready**: Service worker ready
 
 ## Browser Support
 
 - **Modern Browsers**: Chrome 90+, Firefox 88+, Safari 14+
 - **Mobile**: iOS Safari 14+, Chrome Mobile 90+
-- **Progressive Enhancement**: Graceful degradation for older browsers
 
 ## Deployment
 
@@ -182,6 +168,5 @@ npm run build
 - **Vercel**: Zero-config deployment
 - **Netlify**: Static site hosting
 - **AWS S3**: Cloud hosting
-- **Docker**: Containerized deployment
 
 This frontend demonstrates modern React development practices with a focus on performance, user experience, and maintainability. The codebase is production-ready and easily scalable for enterprise use.

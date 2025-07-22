@@ -7,38 +7,37 @@ In today's brutal job market where every ML interview feels like a PhD defense, 
 ## 🎯 What Makes This Different (And Actually Useful)
 
 ### The Problem with Other Interview Prep Tools
-Most interview prep platforms are like those generic flashcards you used in college—static, boring, and completely disconnected from real-world scenarios. They don't understand context, can't adapt to your learning style, and definitely can't give you meaningful feedback on your thought process.
+Most interview prep platforms are static and disconnected from real-world scenarios. They don't adapt to your learning style or provide meaningful feedback.
 
 ### How IntrVu Solves It
-- **Intelligent Question Generation**: Our AI doesn't just regurgitate textbook questions. It creates scenarios based on real interview patterns, your skill level, and current industry trends
-- **Adaptive Learning**: The system learns from your responses and adjusts difficulty accordingly. Struggling with neural networks? It'll focus there. Acing everything? Time to crank up the complexity
-- **Real-time Feedback**: Get instant, detailed feedback on your answers, not just "correct/incorrect" but actual explanations of why your approach works (or doesn't)
-- **Comprehensive Coverage**: From software development and data science to machine learning and system design, we cover the full spectrum of technical interview topics
+- **Intelligent Question Generation**: Creates scenarios based on real interview patterns and your skill level
+- **Adaptive Learning**: Adjusts difficulty based on your performance
+- **Real-time Feedback**: Provides detailed explanations, not just correct/incorrect answers
+- **Comprehensive Coverage**: Covers software development, data science, machine learning, and system design
 
 ## 🏗️ Technical Architecture That Actually Works
 
 ### Backend Excellence
-- **Multi-Agent System**: Orchestrated AI agents using LangGraph for intelligent question generation and evaluation
-- **Production-Ready Performance**: Sub-2 second response times with proper error handling and rate limiting
-- **Scalable Design**: Built to handle thousands of concurrent users without breaking a sweat
-- **Real-time Analytics**: Track your progress with detailed insights and performance metrics
+- **Multi-Agent System**: Orchestrated AI agents using LangGraph for intelligent question generation
+- **Production-Ready Performance**: Sub-2 second response times with error handling
+- **Scalable Design**: Built to handle thousands of concurrent users
+- **Real-time Analytics**: Track progress with detailed insights
 
 ### Frontend Innovation
 - **Modern React Stack**: Built with React 18, Vite, and cutting-edge web technologies
 - **Exceptional UX**: Smooth animations, responsive design, and intuitive navigation
 - **Performance Optimized**: Lazy loading, code splitting, and efficient state management
-- **Accessibility First**: Works seamlessly across all devices and screen sizes
 
 ## 💼 Why This Matters for Your Career
 
 ### The Job Market Reality
-The tech job market is more competitive than ever. Companies aren't just looking for people who can code—they want engineers who can think critically, solve complex problems, and communicate their solutions effectively across software development, data science, and machine learning domains. Traditional interview prep tools don't prepare you for this reality.
+The tech job market is more competitive than ever. Companies want engineers who can think critically, solve complex problems, and communicate effectively across software development, data science, and machine learning domains.
 
 ### How IntrVu Prepares You
-- **Critical Thinking Development**: Our scenario-based challenges force you to think through problems across multiple domains, not just memorize solutions
-- **Communication Skills**: Practice explaining complex concepts clearly and concisely
-- **Real-world Problem Solving**: Tackle problems that mirror actual industry challenges in software, data, and ML
-- **Confidence Building**: Regular practice with adaptive difficulty builds genuine confidence
+- **Critical Thinking Development**: Scenario-based challenges across multiple domains
+- **Communication Skills**: Practice explaining complex concepts clearly
+- **Real-world Problem Solving**: Tackle problems that mirror actual industry challenges
+- **Confidence Building**: Regular practice with adaptive difficulty
 
 ## 🚀 Quick Start
 
@@ -81,19 +80,35 @@ npm run dev
 ## ✨ Key Features That Actually Work
 
 ### Intelligent Challenge Generation
-- **Personalized Questions**: AI generates questions based on your skill level and learning goals
-- **Topic Coverage**: Comprehensive coverage of software development, data science, machine learning, and system design
+- **Personalized Questions**: AI generates questions based on your skill level
+- **Topic Coverage**: Comprehensive coverage of software development, data science, ML, and system design
 - **Difficulty Adaptation**: Automatically adjusts based on your performance
 
 ### Real-time Evaluation
 - **Instant Feedback**: Get detailed explanations of why your answer was right or wrong
 - **Learning Insights**: Understand your strengths and areas for improvement
-- **Progress Tracking**: Monitor your improvement over time with detailed analytics
+- **Progress Tracking**: Monitor your improvement over time
 
 ### User Experience
 - **Smooth Interface**: Modern, responsive design that works on any device
 - **Dark/Light Mode**: Comfortable viewing in any lighting condition
-- **Progress History**: Complete record of your practice sessions and improvements
+- **Progress History**: Complete record of your practice sessions
+
+![IntrVu Landing Page](Screenshot%202025-07-21%20at%2021.52.30.png)
+
+*The modern, intuitive landing page showcasing IntrVu's multi-agent AI interview coaching platform*
+
+![Progress Dashboard](Screenshot%202025-07-21%20at%2021.53.10.png)
+
+*Comprehensive progress tracking with detailed analytics and performance insights*
+
+![Performance Overview](Screenshot%202025-07-21%20at%2021.53.32.png)
+
+*Real-time performance monitoring across different challenge types and time periods*
+
+![Scenario Challenges](Screenshot%202025-07-21%20at%2021.54.56.png)
+
+*Interactive scenario-based challenges with real-world problem-solving exercises*
 
 ## 🛠️ Technology Stack
 
@@ -154,14 +169,13 @@ The system uses a sophisticated multi-agent architecture orchestrated by LangGra
 ### AI/ML Engineering Skills
 - **LLM Integration**: Sophisticated use of multiple AI models for different tasks
 - **Workflow Orchestration**: Complex multi-step processes with LangGraph
-- **Prompt Engineering**: Carefully crafted prompts for consistent, high-quality output
+- **Prompt Engineering**: Carefully crafted prompts for consistent output
 - **Evaluation Systems**: Intelligent assessment of user responses
 
 ### Full-Stack Development
 - **Modern Frontend**: React with modern patterns and performance optimization
 - **RESTful APIs**: Clean, well-documented API design
 - **Database Design**: Proper schema design with indexing and optimization
-- **DevOps Ready**: Containerization and deployment-ready architecture
 
 ## Contributing
 
@@ -177,4 +191,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Built with ❤️ for the tech community. Because interviews shouldn't be a guessing game.** 
+**Built with ❤️ by Hetav for the tech community. Because interviews shouldn't be a guessing game!** 
