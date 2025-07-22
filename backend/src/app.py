@@ -12,7 +12,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins= [
         "http://localhost:5173",
-        "https://intrvu-production.up.railway.app",    
+        "https://intrvu-production.up.railway.app",
+        "https://intrvu-one.vercel.app/",  # Add your Vercel domain
     ],
     allow_credentials=True,
     allow_methods=["*"],

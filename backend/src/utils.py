@@ -28,7 +28,8 @@ def authenticate_and_get_user_details(request):
                 authorized_parties=[
                     "http://localhost:5173",
                     "http://localhost:5174",
-                    "https://intrvu-production.up.railway.app",  # Add your Railway frontend domain
+                    "https://intrvu-production.up.railway.app",
+                    "https://intrvu-one.vercel.app/",  # Add your Vercel domain
                 ],
                 jwt_key= os.getenv("JWT_KEY")
             )
