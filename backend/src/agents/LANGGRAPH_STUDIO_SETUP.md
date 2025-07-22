@@ -198,7 +198,7 @@ def generate_interview_challenges(topic: str, difficulty: str, num_questions: in
 ### 1. Create Project in Studio
 
 1. Go to [studio.langchain.com](https://studio.langchain.com)
-2. Create new project: "IntrVw. Agent"
+2. Create new project: "IntrVu. Agent"
 3. Note your project ID for environment variables
 
 ### 2. Configure Monitoring

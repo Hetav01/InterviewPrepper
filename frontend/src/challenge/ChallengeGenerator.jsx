@@ -46,7 +46,7 @@ export function ChallengeGenerator() {
     
     // Check if user is new and show onboarding
     useEffect(() => {
-        const hasSeenOnboarding = localStorage.getItem('intrvw_onboarding_completed');
+        const hasSeenOnboarding = localStorage.getItem('intrvu_onboarding_completed');
         if (!hasSeenOnboarding) {
             // Small delay to ensure component is fully loaded
             const timer = setTimeout(() => {
@@ -167,7 +167,7 @@ export function ChallengeGenerator() {
     
     const handleOnboardingClose = () => {
         setShowOnboarding(false);
-        localStorage.setItem('intrvw_onboarding_completed', 'true');
+        localStorage.setItem('intrvu_onboarding_completed', 'true');
     };
 
     const getNextResetTime = () => {
@@ -355,7 +355,7 @@ export function ChallengeGenerator() {
             />
             
             <div className="challenge-generator-header">
-                <h1 className="challenge-title">Ace your IntrVw!</h1>
+                <h1 className="challenge-title">Ace your IntrVu!</h1>
                 <p>Generate personalized ML interview challenges to enhance your preparation</p>
             </div>
             

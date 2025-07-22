@@ -55,7 +55,7 @@ export function LoadingProvider({ children }) {
   // Show app loading (for main app initialization)
   const showAppLoading = (config = {}) => {
     showLoading('app', {
-      message: "Initializing IntrVw...",
+      message: "Initializing IntrVu...",
       showProgress: true,
       timeout: 0,
       ...config

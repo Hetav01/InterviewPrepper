@@ -9,7 +9,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
   
   const steps = [
     {
-      title: "Welcome to IntrVw!",
+      title: "Welcome to IntrVu!",
       description: "Let's get you started with your ML interview preparation journey.",
       icon: <TargetIcon size={53} color="currentColor" />,
       content: "This quick tour will show you how to create personalized challenges and track your progress."

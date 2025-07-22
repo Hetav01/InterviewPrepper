@@ -2,7 +2,7 @@
 
 ## Overview
 
-The loading system provides a consistent, performant loading experience across all pages of the IntrVw application. It includes multiple loading screen types optimized for different use cases.
+The loading system provides a consistent, performant loading experience across all pages of the IntrVu application. It includes multiple loading screen types optimized for different use cases.
 
 ## Components
 
@@ -59,7 +59,7 @@ const { showAppLoading, hideLoading } = useLoading();
 
 useEffect(() => {
   showAppLoading({
-    message: "Initializing IntrVw...",
+    message: "Initializing IntrVu...",
     showProgress: true,
     timeout: 0
   });
@@ -177,7 +177,7 @@ function MyComponent() {
 
 ### LoadingScreen Props
 - `message`: Custom loading message
-- `showLogo`: Show/hide the IntrVw logo
+- `showLogo`: Show/hide the IntrVu logo
 - `showSpinner`: Show/hide the spinner animation
 - `showProgress`: Enable progress bar
 - `progress`: Progress percentage (0-100)

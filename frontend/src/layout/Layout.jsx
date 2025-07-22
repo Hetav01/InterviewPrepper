@@ -82,11 +82,11 @@ export function Layout() {
               gradientId="logo-gradient-navbar"
               size="2.3em"
             />
-            <h1 style={{ margin: 0 }}>IntrVw.</h1>
+            <h1 style={{ margin: 0 }}>IntrVu.</h1>
           </div>
           <nav>
             <SignedIn>
-              <Link to="/app">Ace your IntrVw!</Link>
+              <Link to="/app">Ace your IntrVu!</Link>
               <Link to="/history">History</Link>
               <Link to="/about">About</Link>
               <a href="#" className="portfolio-link">

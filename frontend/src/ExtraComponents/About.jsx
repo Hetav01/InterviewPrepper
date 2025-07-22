@@ -69,7 +69,7 @@ export default function About() {
           <div className="about-logo-container">
             <LogoBot className="about-logo" gradientId="about-logo-gradient" size={80} />
           </div>
-          <h1 className="about-title">About IntrVw</h1>
+          <h1 className="about-title">About IntrVu</h1>
           <button className="about-back-btn" onClick={handleBackToHome}>
             ← Back to Home
           </button>
@@ -77,11 +77,11 @@ export default function About() {
 
         <div className="about-content">
           <div className="about-section">
-            <h2 className="about-section-title">What is IntrVw?</h2>
+            <h2 className="about-section-title">What is IntrVu?</h2>
             <p className="about-text">
-              IntrVw is an AI-powered platform designed to help you master machine learning interviews. 
+              IntrVu is an AI-powered platform built to help you excel in machine learning interviews, now with comprehensive coverage of both data and software topics. 
               Whether you're preparing for technical interviews, coding challenges, or system design discussions, 
-              our intelligent system provides personalized practice scenarios and real-time feedback to enhance your skills.
+              our intelligent system delivers personalized practice scenarios and real-time feedback across the full spectrum of data science and software engineering skills.
             </p>
           </div>
 

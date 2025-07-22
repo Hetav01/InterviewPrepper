@@ -57,7 +57,7 @@ export default function LoadingScreen({
         )}
         
         <div className="loading-text-container">
-          <h2 className="loading-title">IntrVw.</h2>
+          <h2 className="loading-title">IntrVu.</h2>
           <p className="loading-message">{message}</p>
         </div>
 
@@ -133,7 +133,7 @@ export function FullPageLoadingScreen({
         </div>
         
         <div className="full-page-loading-text">
-          <h1 className="full-page-loading-title">IntrVw.</h1>
+          <h1 className="full-page-loading-title">IntrVu.</h1>
           <p className="full-page-loading-message">{message}</p>
         </div>
 

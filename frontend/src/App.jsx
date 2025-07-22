@@ -19,7 +19,7 @@ function AppContent() {
   useEffect(() => {
     // Show app loading on initial load
     showAppLoading({
-      message: "Initializing IntrVw...",
+      message: "Initializing IntrVu...",
       showProgress: true,
       timeout: 0
     });

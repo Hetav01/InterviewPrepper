@@ -13,7 +13,7 @@ export default function LandingPage() {
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
   const [displayedText, setDisplayedText] = useState('');
-  const fullText = 'IntrVw.';
+  const fullText = 'IntrVu.';
   const [showButtons, setShowButtons] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [showFeatures, setShowFeatures] = useState(false);
