@@ -104,7 +104,19 @@ export default function LandingPage() {
   const handleButtonClick = (path) => {
     setFadeOut(true);
     setTimeout(() => {
-      navigate(path);
+      // Smoother transition: fade out, then navigate after a short delay
+      const redirectTo = () => {
+        if (path === "/sign-in") {
+          window.location.href = "https://accounts.intrvu.store/sign-in";
+        } else if (path === "/sign-up") {
+          window.location.href = "https://accounts.intrvu.store/sign-up";
+        } else {
+          navigate(path);
+        }
+      };
+
+      // Add a slight delay after fade-out for a smoother transition
+      setTimeout(redirectTo, 500); // 250ms after fade-out starts
     }, 600); // 600ms matches fade-out duration
   };
 
