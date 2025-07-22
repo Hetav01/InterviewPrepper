@@ -14,8 +14,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 
-# Database configuration
-engine = create_engine("sqlite:///database.db", echo=True)
+# Database configuration (development)
+# engine = create_engine("sqlite:///database.db", echo=True)
+import os
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///database.db")
+engine = create_engine(DATABASE_URL, echo=False)
+
 Base = declarative_base()
 
 # ========================================================================================
