@@ -27,7 +27,8 @@ def authenticate_and_get_user_details(request):
             AuthenticateRequestOptions(
                 authorized_parties=[
                     "http://localhost:5173",
-                    "http://localhost:5174"
+                    "http://localhost:5174",
+                    "https://intrvu-production.up.railway.app",  # Add your Railway frontend domain
                 ],
                 jwt_key= os.getenv("JWT_KEY")
             )
