@@ -4,6 +4,10 @@
 
 In today's brutal job market where every ML interview feels like a PhD defense, IntrVu is the intelligent companion that doesn't just throw random questions at you—it learns your weaknesses, adapts to your skill level, and actually helps you improve. Think of it as having a senior ML engineer as your personal tutor, but without the $200/hour price tag.
 
+![IntrVu Landing Page](frontend/src/utils/Screenshot%202025-07-21%20at%2021.52.30.png)
+
+*The modern, intuitive landing page showcasing IntrVu's multi-agent AI interview coaching platform*
+
 ## 🎯 What Makes This Different (And Actually Useful)
 
 ### The Problem with Other Interview Prep Tools
@@ -33,11 +37,23 @@ Most interview prep platforms are static and disconnected from real-world scenar
 ### The Job Market Reality
 The tech job market is more competitive than ever. Companies want engineers who can think critically, solve complex problems, and communicate effectively across software development, data science, and machine learning domains.
 
+![Progress Dashboard](frontend/src/utils/Screenshot%202025-07-21%20at%2021.53.10.png)
+
+*Comprehensive progress tracking with detailed analytics and performance insights*
+
+![Performance Overview](frontend/src/utils/Screenshot%202025-07-21%20at%2021.53.32.png)
+
+*Real-time performance monitoring across different challenge types and time periods*
+
 ### How IntrVu Prepares You
 - **Critical Thinking Development**: Scenario-based challenges across multiple domains
 - **Communication Skills**: Practice explaining complex concepts clearly
 - **Real-world Problem Solving**: Tackle problems that mirror actual industry challenges
 - **Confidence Building**: Regular practice with adaptive difficulty
+
+![Scenario Challenges](frontend/src/utils/Screenshot%202025-07-21%20at%2021.54.56.png)
+
+*Interactive scenario-based challenges with real-world problem-solving exercises*
 
 ## 🚀 Quick Start
 
@@ -93,22 +109,6 @@ npm run dev
 - **Smooth Interface**: Modern, responsive design that works on any device
 - **Dark/Light Mode**: Comfortable viewing in any lighting condition
 - **Progress History**: Complete record of your practice sessions
-
-![IntrVu Landing Page](Screenshot%202025-07-21%20at%2021.52.30.png)
-
-*The modern, intuitive landing page showcasing IntrVu's multi-agent AI interview coaching platform*
-
-![Progress Dashboard](Screenshot%202025-07-21%20at%2021.53.10.png)
-
-*Comprehensive progress tracking with detailed analytics and performance insights*
-
-![Performance Overview](Screenshot%202025-07-21%20at%2021.53.32.png)
-
-*Real-time performance monitoring across different challenge types and time periods*
-
-![Scenario Challenges](Screenshot%202025-07-21%20at%2021.54.56.png)
-
-*Interactive scenario-based challenges with real-world problem-solving exercises*
 
 ## 🛠️ Technology Stack
 
