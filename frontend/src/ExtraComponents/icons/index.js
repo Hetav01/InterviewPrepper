@@ -14,4 +14,5 @@ export { default as CelebrationIcon } from './CelebrationIcon';
 export { default as BrainIcon } from './BrainIcon';
 export { default as MoonIcon } from './MoonIcon';
 export { default as ZapIcon } from './ZapIcon';
-export { default as CalendarIcon } from './CalendarIcon'; 
+export { default as CalendarIcon } from './CalendarIcon';
+export { default as EmptyStateIcon } from './EmptyStateIcon'; 

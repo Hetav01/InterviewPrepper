@@ -531,7 +531,7 @@ export function HistoryPanel() {
                     onClick={loadHistoryData}
                     disabled={loading}
                 >
-                    {loading ? '🔄 Refreshing...' : '🔄 Refresh Data'}
+                    {loading ? 'Refreshing...' : 'Refresh Data'}
                 </button>
             </div>
 

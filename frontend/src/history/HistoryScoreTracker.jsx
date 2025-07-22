@@ -118,9 +118,9 @@ export function HistoryScoreTracker({ history = [] }) {
       <div className="score-stats-grid single-row">
         <div className="score-stat-card today combined">
           <div className="score-stat-header">
-                            <div className="score-stat-icon">
-                  <CalendarIcon size={26} color="currentColor" />
-                </div>
+            <div className="score-stat-icon">
+              <CalendarIcon size={32} color="currentColor" />
+            </div>
             <div className="score-stat-period">Today's Overall</div>
           </div>
           <div className="score-stat-content">

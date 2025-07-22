@@ -4,6 +4,7 @@ import { InterviewChallenge } from "./InterviewChallenge";
 import { ScenarioChallenge } from "./ScenarioChallenge";
 import { useApi } from "../utils/Api";
 import OnboardingModal from "../components/OnboardingModal";
+import { EmptyStateIcon } from "../ExtraComponents/icons";
 
 export function ChallengeGenerator() {
     // State for current challenge data
@@ -312,6 +313,9 @@ export function ChallengeGenerator() {
         if (!currentChallenge) {
             return (
                 <div className="no-challenge-message">
+                    <div className="no-challenge-icon">
+                        <EmptyStateIcon size={58} color="currentColor" />
+                    </div>
                     <p>No challenge generated yet. Fill out the form above and click "Generate Challenge" to get started!</p>
                 </div>
             );

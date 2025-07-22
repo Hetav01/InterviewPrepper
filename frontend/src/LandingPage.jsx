@@ -168,8 +168,7 @@ export default function LandingPage() {
                   lineHeight: "1.6",
                 }}
               >
-                Master technical interviews with personalized challenges,
-                real-time feedback, and comprehensive learning insights.
+                Master technical interviews with personalized challenges in two distinct modes—<span style={{ fontWeight: 700, color: "#3b82f6"}}>Interview</span> and <span style={{ fontWeight: 700, color: "#3b82f6"}}>Scenario</span>—along with real-time feedback and in-depth insights.
               </p>
             </div>
           )}
