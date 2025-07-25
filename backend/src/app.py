@@ -12,10 +12,12 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins= [
         "http://localhost:5173",
-        "https://intrvu-production.up.railway.app",
+        "https://intrvu-production.up.railway.app",    
         "https://intrvu-one.vercel.app",
-        "https://intrvu.store",  # Your custom domain
-        "https://www.intrvu.store",  # Your custom domain with www
+        # "https://intrvu.store",  # Your custom domain
+        # "https://www.intrvu.store",  # Your custom domain with www
+        "https://www.intrvu.online",
+        "https://intrvu.online",
     ],
     allow_credentials=True,
     allow_methods=["*"],
